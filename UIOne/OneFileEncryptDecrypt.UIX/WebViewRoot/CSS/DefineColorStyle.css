@@ -5,7 +5,6 @@
     --ofed-maintitlebgcolor : #eeeeee;
     --ofed-listemptyfontcolor : #999999;
     --ofed-listhoverbgcolor : #eeeeee;
-    --ofed-pleaseselectbgcolor : #eeeeee;
     --ofed-listdirpathcolor : #999999;
     --ofed-listdeletebgcolor : #ffa7a7;
     --ofed-listdeletebordercolor : #ff7e7e;
@@ -13,6 +12,7 @@
     --ofed-encryptbordercolor : #fdb03c;
     --ofed-decryptbgcolor : #8ebefd;
     --ofed-decryptbordercolor : #5ea8fd;
+    --ofed-pageblindbgcolor : #999999;
     --ofed-defaultfontfamily : 'Arial';
 }
 

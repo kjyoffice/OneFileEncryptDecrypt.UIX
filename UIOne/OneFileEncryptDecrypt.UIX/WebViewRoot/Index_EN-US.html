@@ -13,30 +13,14 @@
         <div id="mainframe">
             <div class="maintitle">OneFileEncryptDecrypt</div>
             <div class="newcryptobox">
-                <div class="sourcefile"><input type="file" /></div>
-                <div class="cryptoaction pleaseselect"><button type="button" disabled="disabled">Please select file.</button></div>
-                <div class="cryptoaction encryptaction"><button type="button" class="encryptbutton">Encrypt</button></div>
-                <div class="cryptoaction decryptaction"><button type="button" class="decryptbutton">Decrypt</button></div>
+                <div class="cryptoaction encryptaction"><button type="button" class="encryptbutton">Select encrypt file</button></div>
+                <div class="cryptoaction decryptaction"><button type="button" class="decryptbutton">Select decrypt file</button></div>
             </div>
             <div class="latestlistarea">
-                <ul>
-                    <li class="emptyitembox">Not exist item</li>
-                    <li class="itemx">
-                        <div class="filenamebox">
-                            <div class="filename">Hello.png</div>
-                            <div class="dirpath">D:\Download</div>
-                        </div>
-                        <div class="cryptobox">
-                            <div class="encryptaction"><button type="button" class="encryptbutton">Encrypt</button></div>
-                            <div class="decryptaction"><button type="button" class="decryptbutton">Decrypt</button></div>
-                        </div>
-                        <div class="deletebox">
-                            <div class="deleteaction"><button type="button">Delete</button></div>
-                        </div>
-                    </li>
-                </ul>
+                <ul data-emptyitembox="Not exist item" data-encryptbutton="Encrypt" data-decryptbutton="Decrypt" data-deletebutton="Delete"></ul>
             </div>
         </div>
+        <div id="pageblind"></div>
         <script type="text/javascript" src="/JS/DefaultJS.js"></script>
     </body>
 </html>
