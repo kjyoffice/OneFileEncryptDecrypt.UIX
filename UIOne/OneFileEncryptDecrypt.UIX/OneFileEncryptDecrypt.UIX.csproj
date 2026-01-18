@@ -99,28 +99,19 @@
     <PackageReference Include="System.Configuration.ConfigurationManager">
       <Version>10.0.2</Version>
     </PackageReference>
+    <PackageReference Include="System.Globalization">
+      <Version>4.3.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="WebViewRoot\CSS\DefaultStyle.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="WebViewRoot\CSS\DefineColorStyle.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="WebViewRoot\CSS\EnglishStyle.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="WebViewRoot\CSS\HangulStyle.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="WebViewRoot\CSS\DefaultStyle.css" />
+    <Content Include="WebViewRoot\CSS\DefineColorStyle.css" />
+    <Content Include="WebViewRoot\CSS\EN-US_Style.css" />
+    <Content Include="WebViewRoot\CSS\KO-KR_Style.css" />
     <Content Include="WebViewRoot\Index_CoreKeep1.html" />
-    <Content Include="WebViewRoot\Index_English.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="WebViewRoot\Index_Hangul.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="WebViewRoot\Index_EN-US.html" />
+    <Content Include="WebViewRoot\Index_KO-KR.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
