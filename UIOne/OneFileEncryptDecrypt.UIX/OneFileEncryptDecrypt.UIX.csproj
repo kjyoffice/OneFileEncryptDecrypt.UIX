@@ -105,13 +105,25 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="WebViewRoot\CSS\DefaultStyle.css" />
-    <Content Include="WebViewRoot\CSS\DefineColorStyle.css" />
-    <Content Include="WebViewRoot\CSS\EN-US_Style.css" />
-    <Content Include="WebViewRoot\CSS\KO-KR_Style.css" />
+    <Content Include="WebViewRoot\CSS\DefaultStyle.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="WebViewRoot\CSS\DefineColorStyle.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="WebViewRoot\CSS\EN-US_Style.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="WebViewRoot\CSS\KO-KR_Style.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="WebViewRoot\Index_CoreKeep1.html" />
-    <Content Include="WebViewRoot\Index_EN-US.html" />
-    <Content Include="WebViewRoot\Index_KO-KR.html" />
+    <Content Include="WebViewRoot\Index_EN-US.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="WebViewRoot\Index_KO-KR.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
