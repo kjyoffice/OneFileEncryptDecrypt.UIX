@@ -29,8 +29,13 @@ namespace OneFileEncryptDecrypt.UIX
     // https://grantwinney.com/webview2-a-browser-for-winforms/
     public partial class MainForm : Form
     {
-        public MainForm()
+        private string LanguageCode { get; set; }
+
+        // -------------------------------------------------
+
+        public MainForm(string languageCode)
         {
+            this.LanguageCode = languageCode;
             this.InitializeComponent();
         }
 
@@ -44,8 +49,9 @@ namespace OneFileEncryptDecrypt.UIX
         private void MainForm_Shown(object sender, EventArgs e)
         {
             var mwb = this.MainWebBrowser;
+            var langCode = this.LanguageCode;
             var mainSiteURL = XValue.ProcessValue.MainSiteURL;
-            var goPath = new Uri($"{mainSiteURL}/Index.html");
+            var goPath = new Uri($"{mainSiteURL}/Index_{langCode}.html");
 
             mwb.Source = goPath;
         }

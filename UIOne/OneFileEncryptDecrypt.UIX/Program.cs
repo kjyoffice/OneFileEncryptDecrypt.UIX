@@ -36,7 +36,7 @@ namespace OneFileEncryptDecrypt.UIX
             var buildType = Program.BuildType;
             var asmName = Assembly.GetExecutingAssembly().GetName().Name;
             var mutexName = (asmName + "_" + buildType);
-            var langCode = CultureInfo.CurrentUICulture.Name.ToUpper();
+            var languageCode = CultureInfo.CurrentUICulture.Name.ToUpper();
 
             using (var mt = new Mutex(false, mutexName))
             {
@@ -44,7 +44,7 @@ namespace OneFileEncryptDecrypt.UIX
                 {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new MainForm());
+                    Application.Run(new MainForm(languageCode));
                 }
                 else
                 {
