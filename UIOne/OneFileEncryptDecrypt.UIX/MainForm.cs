@@ -24,6 +24,7 @@ namespace OneFileEncryptDecrypt.UIX
     // https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2.addhostobjecttoscript?view=webview2-dotnet-1.0.3595.46
     // https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2.postwebmessageasjson?view=webview2-dotnet-1.0.3595.46
     // https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2.postwebmessageasstring?view=webview2-dotnet-1.0.3595.46
+    // https://learn.microsoft.com/en-us/microsoft-edge/webview2/get-started/winforms
 
     // https://weblog.west-wind.com/posts/2021/Jan/14/Taking-the-new-Chromium-WebView2-Control-for-a-Spin-in-NET-Part-1
     // https://grantwinney.com/webview2-a-browser-for-winforms/

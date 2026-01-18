@@ -127,6 +127,7 @@
     <Content Include="WebViewRoot\JS\DefaultJS.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <TypeScriptCompile Include="WebViewRoot_TS\global.d.ts" />
     <TypeScriptCompile Include="WebViewRoot_TS\DefaultJS.ts" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
