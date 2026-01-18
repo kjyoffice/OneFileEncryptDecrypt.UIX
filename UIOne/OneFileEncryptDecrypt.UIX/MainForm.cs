@@ -45,7 +45,7 @@ namespace OneFileEncryptDecrypt.UIX
         {
             var mwb = this.MainWebBrowser;
             var mainSiteURL = XValue.ProcessValue.MainSiteURL;
-            var goPath = new Uri($"{mainSiteURL}/index.html");
+            var goPath = new Uri($"{mainSiteURL}/Index.html");
 
             mwb.Source = goPath;
         }

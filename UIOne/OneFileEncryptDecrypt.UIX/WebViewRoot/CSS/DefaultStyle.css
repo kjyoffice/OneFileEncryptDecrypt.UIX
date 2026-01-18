@@ -1,0 +1,28 @@
+html, 
+body, 
+* { padding:0px; margin:0px; box-sizing:border-box; }
+
+html, 
+body,
+input, 
+textarea, 
+select,
+button { color:#000000; font-size:16px; font-family:var(--ofed-defaultfontfamily); font-optical-sizing: auto; font-style: normal; }
+
+body { scroll-behavior:smooth; }
+
+a { color:#000000; text-decoration:none; }
+
+#mainframe { width:100%; }
+#mainframe .maintitle { padding:20px 0px; text-align:center; font-size:2rem; font-weight:bold; background-color:#eeeeee; border-bottom:1px solid #999999; }
+#mainframe .newcryptobox { padding:30px 0px; text-align:center; border-bottom:1px solid #999999; }
+#mainframe .newcryptobox .sourcefile input { width:90%; padding:5px; border:1px solid #999999; border-radius:5px; }
+#mainframe .newcryptobox .cryptoaction button { width:90%; padding:10px; margin-top:10px; font-weight:bold; border:1px solid #999999; border-radius:5px; cursor:pointer; }
+#mainframe .newcryptobox .cryptoaction.encryptaction button { background-color:#dfdfff; }
+#mainframe .newcryptobox .cryptoaction.decryptaction button { background-color:#aaffcc; }
+#mainframe .latestlistarea { padding:10px; }
+#mainframe .latestlistarea ul { list-style:none; }
+#mainframe .latestlistarea ul li.itemx { margin-bottom:10px; background-color:chartreuse; display: flex; align-items: center; flex-direction: row; justify-content: space-between; gap:10px; }
+#mainframe .latestlistarea ul li.itemx .filenamebox { width:calc(100% - 270px); background-color:aquamarine; border:1px solid #000000; }
+#mainframe .latestlistarea ul li.itemx .cryptobox { width:100px; background-color:darkgoldenrod; border:1px solid #000000; }
+#mainframe .latestlistarea ul li.itemx .deletebox { width:150px; background-color:darkcyan; border:1px solid #000000; }
