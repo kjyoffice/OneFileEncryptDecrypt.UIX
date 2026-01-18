@@ -47,10 +47,9 @@
             this.MainWebBrowser.AllowExternalDrop = true;
             this.MainWebBrowser.CreationProperties = null;
             this.MainWebBrowser.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.MainWebBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainWebBrowser.Location = new System.Drawing.Point(0, 0);
+            this.MainWebBrowser.Location = new System.Drawing.Point(80, 97);
             this.MainWebBrowser.Name = "MainWebBrowser";
-            this.MainWebBrowser.Size = new System.Drawing.Size(784, 539);
+            this.MainWebBrowser.Size = new System.Drawing.Size(561, 367);
             this.MainWebBrowser.TabIndex = 1;
             this.MainWebBrowser.ZoomFactor = 1D;
             this.MainWebBrowser.CoreWebView2InitializationCompleted += new System.EventHandler<Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs>(this.MainWebBrowser_CoreWebView2InitializationCompleted);
@@ -59,11 +58,10 @@
             // 
             this.TestXAction.Location = new System.Drawing.Point(12, 12);
             this.TestXAction.Name = "TestXAction";
-            this.TestXAction.Size = new System.Drawing.Size(82, 43);
+            this.TestXAction.Size = new System.Drawing.Size(309, 43);
             this.TestXAction.TabIndex = 2;
             this.TestXAction.Text = "Test X";
             this.TestXAction.UseVisualStyleBackColor = true;
-            this.TestXAction.Visible = false;
             this.TestXAction.Click += new System.EventHandler(this.TestXAction_Click);
             // 
             // MainForm

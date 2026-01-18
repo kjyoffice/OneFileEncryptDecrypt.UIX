@@ -82,6 +82,7 @@ const PageLoadEventAction = function (e) {
     DisplayLatestList();
 };
 const ReceiveWebVeiwMessage = function (e) {
+    console.log(e.data, e);
 };
 window.addEventListener('load', PageLoadEventAction);
 window.chrome.webview.addEventListener('message', ReceiveWebVeiwMessage);

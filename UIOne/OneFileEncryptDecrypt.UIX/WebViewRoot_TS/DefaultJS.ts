@@ -131,7 +131,7 @@ const PageLoadEventAction = function(e:Event) : void {
 };
 
 const ReceiveWebVeiwMessage = function(e:MessageEvent<any>) : void {
-    //console.log(e.data, e);
+    console.log(e.data, e);
 };
 
 window.addEventListener('load', PageLoadEventAction);
