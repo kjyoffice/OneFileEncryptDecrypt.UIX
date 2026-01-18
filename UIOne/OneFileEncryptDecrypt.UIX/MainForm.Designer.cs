@@ -30,6 +30,7 @@
         {
             this.MainStatusBar = new System.Windows.Forms.StatusStrip();
             this.MainWebBrowser = new Microsoft.Web.WebView2.WinForms.WebView2();
+            this.TestXAction = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.MainWebBrowser)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,12 +55,25 @@
             this.MainWebBrowser.ZoomFactor = 1D;
             this.MainWebBrowser.CoreWebView2InitializationCompleted += new System.EventHandler<Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs>(this.MainWebBrowser_CoreWebView2InitializationCompleted);
             // 
+            // TestXAction
+            // 
+            this.TestXAction.Location = new System.Drawing.Point(12, 12);
+            this.TestXAction.Name = "TestXAction";
+            this.TestXAction.Size = new System.Drawing.Size(82, 43);
+            this.TestXAction.TabIndex = 2;
+            this.TestXAction.Text = "Test X";
+            this.TestXAction.UseVisualStyleBackColor = true;
+            this.TestXAction.Visible = false;
+            this.TestXAction.Click += new System.EventHandler(this.TestXAction_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.MainWebBrowser);
+            this.Controls.Add(this.TestXAction);
             this.Controls.Add(this.MainStatusBar);
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainForm";
@@ -77,6 +91,7 @@
 
         private System.Windows.Forms.StatusStrip MainStatusBar;
         private Microsoft.Web.WebView2.WinForms.WebView2 MainWebBrowser;
+        private System.Windows.Forms.Button TestXAction;
     }
 }
 

@@ -32,8 +32,9 @@ namespace OneFileEncryptDecrypt.UIX
             Program.BuildType = "RELEASE";
             Program.DebugBuildMode();
 
+            var buildType = Program.BuildType;
             var asmName = Assembly.GetExecutingAssembly().GetName().Name;
-            var mutexName = (asmName + "_" + Program.BuildType);
+            var mutexName = (asmName + "_" + buildType);
 
             using (var mt = new Mutex(false, mutexName))
             {
