@@ -80,6 +80,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="WebViewRoot_TS\tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -124,6 +125,10 @@
     <Content Include="WebViewRoot\Index_KO-KR.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="WebViewRoot\JS\DefaultJS.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <TypeScriptCompile Include="WebViewRoot_TS\DefaultJS.ts" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
