@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace OneFileEncryptDecrypt.UIX
 {
@@ -35,6 +36,7 @@ namespace OneFileEncryptDecrypt.UIX
             var buildType = Program.BuildType;
             var asmName = Assembly.GetExecutingAssembly().GetName().Name;
             var mutexName = (asmName + "_" + buildType);
+            var langCode = CultureInfo.CurrentUICulture.Name.ToUpper();
 
             using (var mt = new Mutex(false, mutexName))
             {
