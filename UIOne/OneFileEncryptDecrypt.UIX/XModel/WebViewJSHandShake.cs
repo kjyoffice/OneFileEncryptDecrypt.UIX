@@ -13,18 +13,27 @@ namespace OneFileEncryptDecrypt.UIX.XModel
     [ComVisible(true)]
     public class WebViewJSHandShake
     {
-        public WebViewJSHandShake()
+        private Func<string> GetLatestFileListAction { get; set; }
+
+        // -----------------------------------------------------------------
+
+        public WebViewJSHandShake(Func<string> getLatestFileListAction)
         {
-            //>
+            this.GetLatestFileListAction = getLatestFileListAction;
         }
 
         public string HelloMessage(string name)
         {
             var result = $"Hello~ {name}!";
 
-            Debug.WriteLine(("WebViewJSHandShake.HelloMessage >>> " + result));
+            //Debug.WriteLine(("WebViewJSHandShake.HelloMessage >>> " + result));
 
             return result;
+        }
+
+        public string GetLatestFileList()
+        {
+            return this.GetLatestFileListAction();
         }
     }
 }

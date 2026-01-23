@@ -30,13 +30,24 @@ namespace OneFileEncryptDecrypt.UIX
     // https://grantwinney.com/webview2-a-browser-for-winforms/
     public partial class MainForm : Form
     {
-        private string LanguageCode { get; set; }
+        private XModel.ProcessSupportX PSX { get; set; }
 
         // -------------------------------------------------
 
-        public MainForm(string languageCode)
+        private string WebViewAction_GetLatestFileList()
         {
-            this.LanguageCode = languageCode;
+            var result = string.Empty;
+
+            result = "GetLatestFileList!!!";
+
+            return result;
+        }
+
+        // -------------------------------------------------
+
+        public MainForm(XModel.ProcessSupportX psx)
+        {
+            this.PSX = psx;
             this.InitializeComponent();
         }
 
@@ -49,16 +60,16 @@ namespace OneFileEncryptDecrypt.UIX
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
+            var psx = this.PSX;
             var mwb = this.MainWebBrowser;
-            var langCode = this.LanguageCode;
-            var mainSiteURL = XValue.ProcessValue.MainSiteURL;
-            var goPath = new Uri($"{mainSiteURL}/Index_{langCode}.html");
+            var goPath = new Uri($"https://{psx.WebViewHostName}/Index_{psx.LanguageCode}.html");
 
             mwb.Source = goPath;
         }
 
         private void MainWebBrowser_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
+            var psx = this.PSX;
             var caption = this.Text;    
 
             if (e.IsSuccess == true)
@@ -71,19 +82,23 @@ namespace OneFileEncryptDecrypt.UIX
 
                     if (cwv != null)
                     {
-                        var virtualHostName = XValue.ProcessValue.WebView2VirtualHostName_Full;
-                        var folderPath = @".\WebViewRoot";
-                        var wvjshs = new XModel.WebViewJSHandShake();
+                        var mappingDirPath = @".\WebViewRoot";
+                        var wvjshs = new XModel.WebViewJSHandShake(this.WebViewAction_GetLatestFileList);
 
                         cwv.Settings.IsGeneralAutofillEnabled = false;
                         cwv.Settings.IsPasswordAutosaveEnabled = false;
-                        //cwv.Settings.AreDevToolsEnabled = false;
-                        //cwv.Settings.AreDefaultContextMenusEnabled = false;
 
-                        cwv.SetVirtualHostNameToFolderMapping(virtualHostName, folderPath, CoreWebView2HostResourceAccessKind.Allow);
-                        cwv.AddHostObjectToScript("handShake", wvjshs);
+                        if (psx.IsDebugMode == false)
+                        {
+                            cwv.Settings.AreDevToolsEnabled = false;
+                            cwv.Settings.AreDefaultContextMenusEnabled = false;
+                        }
 
-                        Debug.WriteLine("MainWebBrowser_CoreWebView2InitializationCompleted");
+                        cwv.SetVirtualHostNameToFolderMapping(psx.WebViewHostName, mappingDirPath, CoreWebView2HostResourceAccessKind.Allow);
+                        // 여기 "wvHandShake"와 WebViewRoot_TS 파일의 WVHandShakeX Method 내 hostObjects의 "wvHandShake"가 같아야 한다
+                        cwv.AddHostObjectToScript("wvHandShake", wvjshs);
+
+                        //Debug.WriteLine("MainWebBrowser_CoreWebView2InitializationCompleted");
                     }
                     else
                     {
@@ -105,7 +120,7 @@ namespace OneFileEncryptDecrypt.UIX
         {
             var cwv = this.MainWebBrowser.CoreWebView2;
 
-            Debug.WriteLine("MainForm.TestXAction_Click");
+            //Debug.WriteLine("MainForm.TestXAction_Click");
 
             cwv.PostWebMessageAsString("Hello World");
             cwv.PostWebMessageAsJson(@"{ ""hello"" : ""World"" }");

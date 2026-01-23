@@ -5,12 +5,13 @@
     isEncrypt:boolean;
 };
 
-const HandShakeX = function () {
-    return window.chrome.webview.hostObjects.handShake;
+const WVHandShakeX = function () {
+    // 여기 "wvHandShake"와 윈폼내 AddHostObjectToScript 부분의 "wvHandShake"가 같아야 한다
+    return window.chrome.webview.hostObjects.wvHandShake;
 };
 
 const SendHelloMessage = async function () {
-    console.log(await HandShakeX().HelloMessage('Anders'));
+    console.log(await WVHandShakeX().HelloMessage('Anders'));
 };
 
 const SelectNewEncryptFileAction = function(e:Event) : void {
@@ -33,7 +34,7 @@ const FileItemDeleteAction = function(fileID:string) : void {
     alert(('FileItemDeleteAction > ' + fileID));
 };
 
-const DisplayLatestList = function() : void {
+const DisplayLatestFileList = async function() : Promise<void> {
     const areaX = (document.querySelector('#mainframe .latestlistarea ul') as HTMLUListElement);
     /*
     const fileList:LatestFileListType[] = [
@@ -51,22 +52,30 @@ const DisplayLatestList = function() : void {
         }
     ];
     */
-   const fileList:LatestFileListType[] = [];
+    const fileList:LatestFileListType[] = [];
     
-    DisplayLatestList_AllClear(areaX);
+    ShowHidePageBlind(true);
+
+    DisplayLatestFileList_AllClear(areaX);
+
+    const fileListRawText = await WVHandShakeX().GetLatestFileList();
+
+    console.log(fileListRawText);
 
     if(fileList.length > 0) {
         fileList.forEach(
             function(fileItem:LatestFileListType) : void {
-                DisplayLatestList_CreateFileItem(areaX, fileItem);
+                DisplayLatestFileList_CreateFileItem(areaX, fileItem);
             }
         );
     } else {
-        DisplayLatestList_CreateNotExist(areaX);
+        DisplayLatestFileList_CreateNotExist(areaX);
     }
+
+    ShowHidePageBlind(false);
 };
 
-const DisplayLatestList_AllClear = function(areaX : HTMLUListElement) : void {
+const DisplayLatestFileList_AllClear = function(areaX : HTMLUListElement) : void {
     const itemList = (areaX.querySelectorAll('li') as NodeListOf<HTMLLIElement>);
 
     if(itemList.length > 0) {
@@ -78,7 +87,7 @@ const DisplayLatestList_AllClear = function(areaX : HTMLUListElement) : void {
     }
 };
 
-const DisplayLatestList_CreateNotExist = function(areaX:HTMLUListElement) : void {
+const DisplayLatestFileList_CreateNotExist = function(areaX:HTMLUListElement) : void {
     var itemX = (document.createElement('LI') as HTMLLIElement);
     itemX.classList.add('emptyitembox');
     itemX.innerText = areaX.dataset.emptyitembox!;
@@ -86,7 +95,7 @@ const DisplayLatestList_CreateNotExist = function(areaX:HTMLUListElement) : void
     areaX.appendChild(itemX);
 };
 
-const DisplayLatestList_CreateFileItem = function(areaX:HTMLUListElement, fileItem:LatestFileListType) : void {
+const DisplayLatestFileList_CreateFileItem = function(areaX:HTMLUListElement, fileItem:LatestFileListType) : void {
     // 암호화면, 복호화로 표시
     // 암호화가 아니면(=복호화) 암호화로 표시
     const cryptoBoxHTML = (
@@ -128,7 +137,7 @@ const PageLoadEventAction = function(e:Event) : void {
     encAction.addEventListener('click', SelectNewEncryptFileAction);
     decAction.addEventListener('click', SelectNewDecryptFileAction);
 
-    DisplayLatestList();
+    DisplayLatestFileList();
 };
 
 const ReceiveWebVeiwMessage = function(e:MessageEvent<any>) : void {

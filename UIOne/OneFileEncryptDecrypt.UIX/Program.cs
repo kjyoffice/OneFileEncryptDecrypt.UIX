@@ -12,14 +12,14 @@ namespace OneFileEncryptDecrypt.UIX
 {
     public static class Program
     {
-        private static string BuildType { get; set; }
+        private static bool IsDebugMode { get; set; }
 
         // -----------------------------------------------------------------------------------
 
         [Conditional("DEBUG")]
-        private static void DebugBuildMode()
+        private static void ChangeDebugMode()
         {
-            Program.BuildType = "DEBUG";
+            Program.IsDebugMode = true;
         }
 
         // -----------------------------------------------------------------------------------
@@ -30,13 +30,15 @@ namespace OneFileEncryptDecrypt.UIX
         [STAThread]
         public static void Main()
         {
-            Program.BuildType = "RELEASE";
-            Program.DebugBuildMode();
+            Program.IsDebugMode = false;
+            Program.ChangeDebugMode();
 
-            var buildType = Program.BuildType;
             var asmName = Assembly.GetExecutingAssembly().GetName().Name;
+
+            var isDebugMode = Program.IsDebugMode;
+            var buildType = ((isDebugMode == true) ? "DEBUG" : "RELEASE");
             var mutexName = (asmName + "_" + buildType);
-            var languageCode = CultureInfo.CurrentUICulture.Name.ToUpper();
+            var psx = new XModel.ProcessSupportX(isDebugMode);
 
             using (var mt = new Mutex(false, mutexName))
             {
@@ -44,7 +46,7 @@ namespace OneFileEncryptDecrypt.UIX
                 {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new MainForm(languageCode));
+                    Application.Run(new MainForm(psx));
                 }
                 else
                 {

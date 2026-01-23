@@ -1,9 +1,9 @@
 ﻿"use strict";
-const HandShakeX = function () {
-    return window.chrome.webview.hostObjects.handShake;
+const WVHandShakeX = function () {
+    return window.chrome.webview.hostObjects.wvHandShake;
 };
 const SendHelloMessage = async function () {
-    console.log(await HandShakeX().HelloMessage('Anders'));
+    console.log(await WVHandShakeX().HelloMessage('Anders'));
 };
 const SelectNewEncryptFileAction = function (e) {
     alert('SelectNewEncryptFileAction');
@@ -20,20 +20,24 @@ const FileItemDecryptAction = function (fileID) {
 const FileItemDeleteAction = function (fileID) {
     alert(('FileItemDeleteAction > ' + fileID));
 };
-const DisplayLatestList = function () {
+const DisplayLatestFileList = async function () {
     const areaX = document.querySelector('#mainframe .latestlistarea ul');
     const fileList = [];
-    DisplayLatestList_AllClear(areaX);
+    ShowHidePageBlind(true);
+    DisplayLatestFileList_AllClear(areaX);
+    const fileListRawText = await WVHandShakeX().GetLatestFileList();
+    console.log(fileListRawText);
     if (fileList.length > 0) {
         fileList.forEach(function (fileItem) {
-            DisplayLatestList_CreateFileItem(areaX, fileItem);
+            DisplayLatestFileList_CreateFileItem(areaX, fileItem);
         });
     }
     else {
-        DisplayLatestList_CreateNotExist(areaX);
+        DisplayLatestFileList_CreateNotExist(areaX);
     }
+    ShowHidePageBlind(false);
 };
-const DisplayLatestList_AllClear = function (areaX) {
+const DisplayLatestFileList_AllClear = function (areaX) {
     const itemList = areaX.querySelectorAll('li');
     if (itemList.length > 0) {
         itemList.forEach(function (item) {
@@ -41,13 +45,13 @@ const DisplayLatestList_AllClear = function (areaX) {
         });
     }
 };
-const DisplayLatestList_CreateNotExist = function (areaX) {
+const DisplayLatestFileList_CreateNotExist = function (areaX) {
     var itemX = document.createElement('LI');
     itemX.classList.add('emptyitembox');
     itemX.innerText = areaX.dataset.emptyitembox;
     areaX.appendChild(itemX);
 };
-const DisplayLatestList_CreateFileItem = function (areaX, fileItem) {
+const DisplayLatestFileList_CreateFileItem = function (areaX, fileItem) {
     const cryptoBoxHTML = ((fileItem.isEncrypt == true) ?
         ('<div class="decryptaction"><button type="button" class="decryptbutton" onclick="FileItemDecryptAction(\'' + fileItem.itemID + '\');">' + areaX.dataset.decryptbutton + '</button></div>') :
         ('<div class="encryptaction"><button type="button" class="encryptbutton" onclick="FileItemEncryptAction(\'' + fileItem.itemID + '\');">' + areaX.dataset.encryptbutton + '</button></div>'));
@@ -80,7 +84,7 @@ const PageLoadEventAction = function (e) {
     const decAction = ncb.querySelector('.decryptbox .mainaction button');
     encAction.addEventListener('click', SelectNewEncryptFileAction);
     decAction.addEventListener('click', SelectNewDecryptFileAction);
-    DisplayLatestList();
+    DisplayLatestFileList();
 };
 const ReceiveWebVeiwMessage = function (e) {
     console.log(e.data, e);
