@@ -4,8 +4,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" type="text/css" href="/CSS/DefineColorStyle.css" />
-        <link rel="stylesheet" type="text/css" href="/CSS/EN-US_Style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" />
         <link rel="stylesheet" type="text/css" href="/CSS/DefaultStyle.css" />
         <title> Hello </title>        
     </head>
@@ -13,8 +14,16 @@
         <div id="mainframe">
             <div class="maintitle">OneFileEncryptDecrypt</div>
             <div class="newcryptobox">
-                <div class="cryptoaction encryptaction"><button type="button" class="encryptbutton">Select encrypt file</button></div>
-                <div class="cryptoaction decryptaction"><button type="button" class="decryptbutton">Select decrypt file</button></div>
+                <div class="cryptobox encryptbox">
+                    <div class="mainaction">
+                        <button type="button" class="encryptbutton">Select encrypt file</button>
+                    </div>  
+                </div>
+                <div class="cryptobox decryptbox">
+                    <div class="mainaction">
+                        <button type="button" class="decryptbutton">Select decrypt file</button>
+                    </div>
+                </div>
             </div>
             <div class="latestlistarea">
                 <ul data-emptyitembox="Not exist item" data-encryptbutton="Encrypt" data-decryptbutton="Decrypt" data-deletebutton="Delete"></ul>

@@ -1,3 +1,21 @@
+:root {
+    --ofed-mainbgcolor : #ffffff;
+    --ofed-defaultfontcolor : #000000;
+    --ofed-bordercolor : #999999;
+    --ofed-maintitlebgcolor : #eeeeee;
+    --ofed-listemptyfontcolor : #999999;
+    --ofed-listhoverbgcolor : #eeeeee;
+    --ofed-listdirpathcolor : #999999;
+    --ofed-listdeletebgcolor : #ffa7a7;
+    --ofed-listdeletebordercolor : #ff7e7e;
+    --ofed-encryptbgcolor : #ffb867;
+    --ofed-encryptbordercolor : #fdb03c;
+    --ofed-decryptbgcolor : #8ebefd;
+    --ofed-decryptbordercolor : #5ea8fd;
+    --ofed-pageblindbgcolor : #999999;
+    --ofed-defaultfontfamily : "Noto Sans KR";
+}
+
 html, 
 body, 
 * { padding:0px; margin:0px; box-sizing:border-box; }
@@ -17,9 +35,17 @@ a { color:var(--ofed-defaultfontcolor); text-decoration:none; }
 #mainframe .encryptbutton { background-color:var(--ofed-encryptbgcolor); border:1px solid var(--ofed-encryptbordercolor); }
 #mainframe .decryptbutton { background-color:var(--ofed-decryptbgcolor); border:1px solid var(--ofed-decryptbordercolor); }
 #mainframe .maintitle { padding:20px 0px; text-align:center; font-size:2rem; font-weight:bold; background-color:var(--ofed-maintitlebgcolor); border-bottom:1px solid var(--ofed-bordercolor); }
-#mainframe .newcryptobox { padding:30px 0px; text-align:center; border-bottom:1px solid var(--ofed-bordercolor); display: flex; flex-direction: row; justify-content: center; align-items: center; gap:10px; }
-#mainframe .newcryptobox .cryptoaction { width:35%; }
-#mainframe .newcryptobox .cryptoaction button { width:100%; padding:10px; font-weight:bold; border-radius:5px; cursor:pointer; }
+
+
+#mainframe .newcryptobox { padding:30px 10px; text-align:center; border-bottom:1px solid var(--ofed-bordercolor); display: flex; flex-direction: row; justify-content: center; align-items: center; gap:10px; }
+#mainframe .newcryptobox .cryptobox { width:50%; }
+#mainframe .newcryptobox .cryptobox .mainaction button { width:100%; padding:10px; font-weight:bold; border-radius:5px; cursor:pointer; }
+/*
+#mainframe .newcryptobox .encryptbox {  }
+#mainframe .newcryptobox .decryptbox {  }
+*/
+
+
 #mainframe .latestlistarea ul { list-style:none; }
 #mainframe .latestlistarea ul li.emptyitembox { padding:20px 0px; color:var(--ofed-listemptyfontcolor); text-align:center; font-style:italic; }
 #mainframe .latestlistarea ul li.itemx { padding:10px; border-top:1px solid transparent; border-bottom:1px solid transparent; display: flex; align-items: center; flex-direction: row; justify-content: space-between; gap:10px; }

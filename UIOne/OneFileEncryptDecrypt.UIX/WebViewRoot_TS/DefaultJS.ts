@@ -121,8 +121,9 @@ const ShowHidePageBlind = function(isShow:boolean) : void {
 };
 
 const PageLoadEventAction = function(e:Event) : void {
-    const encAction = (document.querySelector('#mainframe .newcryptobox .encryptaction button') as HTMLButtonElement);
-    const decAction = (document.querySelector('#mainframe .newcryptobox .decryptaction button') as HTMLButtonElement);
+    const ncb = (document.querySelector('#mainframe .newcryptobox') as HTMLDivElement);
+    const encAction = (ncb.querySelector('.encryptbox .mainaction button') as HTMLButtonElement);
+    const decAction = (ncb.querySelector('.decryptbox .mainaction button') as HTMLButtonElement);
 
     encAction.addEventListener('click', SelectNewEncryptFileAction);
     decAction.addEventListener('click', SelectNewDecryptFileAction);

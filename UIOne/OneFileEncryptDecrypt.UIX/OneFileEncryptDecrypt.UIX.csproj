@@ -109,15 +109,6 @@
     <Content Include="WebViewRoot\CSS\DefaultStyle.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="WebViewRoot\CSS\DefineColorStyle.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="WebViewRoot\CSS\EN-US_Style.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="WebViewRoot\CSS\KO-KR_Style.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="WebViewRoot\Index_EN-US.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

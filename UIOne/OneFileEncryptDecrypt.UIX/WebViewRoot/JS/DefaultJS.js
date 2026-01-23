@@ -75,8 +75,9 @@ const ShowHidePageBlind = function (isShow) {
     }
 };
 const PageLoadEventAction = function (e) {
-    const encAction = document.querySelector('#mainframe .newcryptobox .encryptaction button');
-    const decAction = document.querySelector('#mainframe .newcryptobox .decryptaction button');
+    const ncb = document.querySelector('#mainframe .newcryptobox');
+    const encAction = ncb.querySelector('.encryptbox .mainaction button');
+    const decAction = ncb.querySelector('.decryptbox .mainaction button');
     encAction.addEventListener('click', SelectNewEncryptFileAction);
     decAction.addEventListener('click', SelectNewDecryptFileAction);
     DisplayLatestList();
