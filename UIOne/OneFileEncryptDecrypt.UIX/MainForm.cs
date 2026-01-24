@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 using Microsoft.Web.WebView2.WinForms;
 using Microsoft.Web.WebView2.Core;
+using System.IO;
 
 namespace OneFileEncryptDecrypt.UIX
 {
@@ -34,11 +35,38 @@ namespace OneFileEncryptDecrypt.UIX
 
         // -------------------------------------------------
 
-        private string WebViewAction_GetLatestFileList()
+        private List<XModel.LatestCryptoFileItem> GetLatestCryptoFileList(XModel.ProcessSupportX psx)
         {
-            var result = string.Empty;
+            var filePath = psx.LatestCryptoFilePath;
+            var result = new List<XModel.LatestCryptoFileItem>();
 
-            result = "GetLatestFileList!!!";
+            if (File.Exists(filePath) == true)
+            {
+                var jsonText = File.ReadAllText(filePath, Encoding.UTF8);
+                var jsonData = Newtonsoft.Json.JsonConvert.DeserializeObject<XModel_Json.LatestCryptoFileItem_Json[]>(jsonText);
+                var fileList = (jsonData?.Select(x => new XModel.LatestCryptoFileItem(x)) ?? new List<XModel.LatestCryptoFileItem>()).Where(x => (x.IsAllow == true));
+
+                result.AddRange(fileList);
+            }
+
+            return result;
+        }
+
+        private void InitializeDebugTimeControl(XModel.ProcessSupportX psx)
+        {
+            if (psx.IsDebugMode == true)
+            {
+                this.TestXAction.Visible = true;
+            }
+        }
+
+        // -------------------------------------------------
+
+        private string WebViewAction_GetLatestCryptoFileList()
+        {
+            var psx = this.PSX;
+            var lcfiList = this.GetLatestCryptoFileList(psx);
+            var result = Newtonsoft.Json.JsonConvert.SerializeObject(lcfiList);
 
             return result;
         }
@@ -49,6 +77,7 @@ namespace OneFileEncryptDecrypt.UIX
         {
             this.PSX = psx;
             this.InitializeComponent();
+            this.InitializeDebugTimeControl(psx);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -82,8 +111,8 @@ namespace OneFileEncryptDecrypt.UIX
 
                     if (cwv != null)
                     {
-                        var mappingDirPath = @".\WebViewRoot";
-                        var wvjshs = new XModel.WebViewJSHandShake(this.WebViewAction_GetLatestFileList);
+                        var mappingDirPath = ((psx.IsDebugMode == true) ? @"..\..\WebViewRoot" : @".\WebViewRoot");
+                        var wvjshs = new XModel.WebViewJSHandShake(this.WebViewAction_GetLatestCryptoFileList);
 
                         cwv.Settings.IsGeneralAutofillEnabled = false;
                         cwv.Settings.IsPasswordAutosaveEnabled = false;
@@ -118,12 +147,16 @@ namespace OneFileEncryptDecrypt.UIX
 
         private void TestXAction_Click(object sender, EventArgs e)
         {
+            var psx = this.PSX;
             var cwv = this.MainWebBrowser.CoreWebView2;
-
             //Debug.WriteLine("MainForm.TestXAction_Click");
 
+            /*
             cwv.PostWebMessageAsString("Hello World");
             cwv.PostWebMessageAsJson(@"{ ""hello"" : ""World"" }");
+            */
+
+            //Debug.WriteLine(this.WebViewAction_GetLatestCryptoFileList());
         }
     }
 }

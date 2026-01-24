@@ -10,7 +10,7 @@ declare global {
                 hostObjects : {
                     wvHandShake : {
                         HelloMessage(name:string) : string;
-                        GetLatestFileList() : string;
+                        GetLatestCryptoFileList() : string;
                     }
                 }
             };

@@ -27,17 +27,16 @@ textarea,
 select,
 button { color:var(--ofed-defaultfontcolor); font-size:16px; font-family:var(--ofed-defaultfontfamily); font-optical-sizing: auto; font-style: normal; line-height: 1.5; }
 
-body { scroll-behavior:smooth; background-color:var(--ofed-mainbgcolor); }
+body { scroll-behavior:smooth; background-color:var(--ofed-mainbgcolor); overflow:hidden; }
 
 a { color:var(--ofed-defaultfontcolor); text-decoration:none; }
 
 #mainframe { width:100%; }
 #mainframe .encryptbutton { background-color:var(--ofed-encryptbgcolor); border:1px solid var(--ofed-encryptbordercolor); }
 #mainframe .decryptbutton { background-color:var(--ofed-decryptbgcolor); border:1px solid var(--ofed-decryptbordercolor); }
-#mainframe .maintitle { padding:20px 0px; text-align:center; font-size:2rem; font-weight:bold; background-color:var(--ofed-maintitlebgcolor); border-bottom:1px solid var(--ofed-bordercolor); }
+#mainframe .maintitle { width:100%; height:100px; text-align:center; font-size:2rem; font-weight:bold; background-color:var(--ofed-maintitlebgcolor); border-bottom:1px solid var(--ofed-bordercolor); display:flex; align-items:center; justify-content:center; }
 
-
-#mainframe .newcryptobox { padding:30px 10px; text-align:center; border-bottom:1px solid var(--ofed-bordercolor); display: flex; flex-direction: row; justify-content: center; align-items: center; gap:10px; }
+#mainframe .newcryptobox { width:100%; height:120px; padding:10px; text-align:center; border-bottom:1px solid var(--ofed-bordercolor); display: flex; flex-direction: row; justify-content: center; align-items: center; gap:10px; }
 #mainframe .newcryptobox .cryptobox { width:50%; }
 #mainframe .newcryptobox .cryptobox .mainaction button { width:100%; padding:10px; font-weight:bold; border-radius:5px; cursor:pointer; }
 /*
@@ -45,7 +44,7 @@ a { color:var(--ofed-defaultfontcolor); text-decoration:none; }
 #mainframe .newcryptobox .decryptbox {  }
 */
 
-
+#mainframe .latestlistarea { width:100%; height:calc(100vh - 220px); overflow-x:hidden; overflow-y:auto; }
 #mainframe .latestlistarea ul { list-style:none; }
 #mainframe .latestlistarea ul li.emptyitembox { padding:20px 0px; color:var(--ofed-listemptyfontcolor); text-align:center; font-style:italic; }
 #mainframe .latestlistarea ul li.itemx { padding:10px; border-top:1px solid transparent; border-bottom:1px solid transparent; display: flex; align-items: center; flex-direction: row; justify-content: space-between; gap:10px; }
