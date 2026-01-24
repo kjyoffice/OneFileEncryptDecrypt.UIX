@@ -253,7 +253,6 @@ const PageLoadingX = {
         LanguageX.SetPageLanguage();
         PageLoadingX.NewCryptoAction('encrypt', NewCryptoX.EncryptFile);
         PageLoadingX.NewCryptoAction('decrypt', NewCryptoX.DecryptFile);
-        LatestListX.DisplayList();
     },
     NewCryptoAction: function (cryptoType, clickAction) {
         const btnX = document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button'));
