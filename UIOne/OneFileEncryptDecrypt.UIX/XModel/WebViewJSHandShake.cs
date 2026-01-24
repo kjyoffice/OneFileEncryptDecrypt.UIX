@@ -13,12 +13,14 @@ namespace OneFileEncryptDecrypt.UIX.XModel
     [ComVisible(true)]
     public class WebViewJSHandShake
     {
+        private ProcessSupportX PSX { get; set; }
         private Func<string> GetLatestCryptoFileListAction { get; set; }
 
         // -----------------------------------------------------------------
 
-        public WebViewJSHandShake(Func<string> getLatestCryptoFileListAction)
+        public WebViewJSHandShake(ProcessSupportX psx, Func<string> getLatestCryptoFileListAction)
         {
+            this.PSX = psx;
             this.GetLatestCryptoFileListAction = getLatestCryptoFileListAction;
         }
 

@@ -118,6 +118,9 @@
     <Content Include="WebViewRoot\Index_EN-US.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="WebViewRoot\Index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="WebViewRoot\Index_KO-KR.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

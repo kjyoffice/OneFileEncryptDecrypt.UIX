@@ -7,9 +7,14 @@
 
 type EventParameterFNType = (e:Event) => void;
 
-const WVHandShakeX = function () {
+const ProcessX = {
+    LanguageCode : '',
+    IsHangul : true
+};
+
+const WVHandShakeX = function() {
     // 여기 "wvHandShake"와 윈폼내 AddHostObjectToScript 부분의 "wvHandShake"가 같아야 한다
-    return window.chrome.webview.hostObjects.wvHandShake;
+    return window.chrome.webview.hostObjects.wvHandShake;    
 };
 
 const SendHelloMessage = async function () : Promise<void> {
@@ -33,7 +38,7 @@ const FileItemDecryptAction = function(fileID:string) : void {
 };
 
 const FileItemDeleteAction = function(fileID:string) : void {
-    alert(('FileItemDeleteAction > ' + fileID));
+    const delItem = document.getElementById(('fileitemx_' + fileID));    
 };
 
 const LatestListX = {
@@ -121,9 +126,23 @@ const PageBlindX = {
 
 const PageLoadingX = {
     StartInitialize : function(e:Event) : void {
+        const usp = new URLSearchParams(location.search);
+
+        PageLoadingX.SetLanguageCode(usp);
         PageLoadingX.NewCryptoAction('encrypt', SelectNewEncryptFileAction);
         PageLoadingX.NewCryptoAction('decrypt', SelectNewDecryptFileAction);
         LatestListX.DisplayList();    
+    },
+    SetLanguageCode : function(usp:URLSearchParams) : void {
+        const langCode = (usp.get('languagecode') ?? '').toUpperCase();
+
+        if(langCode == 'KO-KR') {
+            ProcessX.LanguageCode = langCode;
+            ProcessX.IsHangul = true;        
+        } else {
+            ProcessX.LanguageCode = 'EN-US';
+            ProcessX.IsHangul = false;
+        }
     },
     NewCryptoAction : function(cryptoType:string, clickAction:EventParameterFNType) {
         const btnX = (document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button')) as HTMLButtonElement);

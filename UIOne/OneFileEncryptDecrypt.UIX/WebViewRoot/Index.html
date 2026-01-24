@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" />
+        <link rel="stylesheet" type="text/css" href="/CSS/DefaultStyle.css" />
+        <title> Hello </title>        
+    </head>
+    <body>
+        <div id="mainframe">
+            <div class="maintitle">OneFileEncryptDecrypt</div>
+            <div class="newcryptobox">
+                <div class="cryptobox encryptbox">
+                    <div class="mainaction">
+                        <button type="button" class="encryptbutton">암호화 파일 선택</button>
+                    </div>
+                </div>
+                <div class="cryptobox decryptbox">
+                    <div class="mainaction">
+                        <button type="button" class="decryptbutton">복호화 파일 선택</button>
+                    </div>  
+                </div>
+            </div>
+            <div class="latestlistarea">
+                <ul data-emptyitembox="항목이 없습니다." data-encryptbutton="암호화" data-decryptbutton="복호화" data-deletebutton="삭제"></ul>
+            </div>
+        </div>
+        <div id="pageblind"></div>
+        <script type="text/javascript" src="/JS/DefaultJS.js"></script>
+    </body>
+</html>
+

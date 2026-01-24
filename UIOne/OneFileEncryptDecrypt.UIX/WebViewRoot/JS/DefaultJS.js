@@ -1,9 +1,12 @@
 ﻿"use strict";
-const WVHandShakeX = function () {
-    return window.chrome.webview.hostObjects.wvHandShake;
+const GlobalX = {
+    LanguageCode: '',
+    WVHandShakeX: function () {
+        return window.chrome.webview.hostObjects.wvHandShake;
+    }
 };
 const SendHelloMessage = async function () {
-    console.log(await WVHandShakeX().HelloMessage('Anders'));
+    console.log(await GlobalX.WVHandShakeX().HelloMessage('Anders'));
 };
 const SelectNewEncryptFileAction = function (e) {
     alert('SelectNewEncryptFileAction');
@@ -18,13 +21,13 @@ const FileItemDecryptAction = function (fileID) {
     alert(('FileItemDecryptAction > ' + fileID));
 };
 const FileItemDeleteAction = function (fileID) {
-    alert(('FileItemDeleteAction > ' + fileID));
+    const delItem = document.getElementById(('fileitemx_' + fileID));
 };
 const LatestListX = {
     DisplayList: async function () {
         PageBlindX.ShowNow();
         const areaX = document.querySelector('#mainframe .latestlistarea ul');
-        const rawFileList = await WVHandShakeX().GetLatestCryptoFileList();
+        const rawFileList = await GlobalX.WVHandShakeX().GetLatestCryptoFileList();
         const fileList = JSON.parse(rawFileList);
         LatestListX.AllClear(areaX);
         if (fileList.length > 0) {
@@ -89,9 +92,15 @@ const PageBlindX = {
 };
 const PageLoadingX = {
     StartInitialize: function (e) {
+        const usp = new URLSearchParams(location.search);
+        PageLoadingX.SetLanguageCode(usp);
         PageLoadingX.NewCryptoAction('encrypt', SelectNewEncryptFileAction);
         PageLoadingX.NewCryptoAction('decrypt', SelectNewDecryptFileAction);
         LatestListX.DisplayList();
+    },
+    SetLanguageCode: function (usp) {
+        const langCode = (usp.get('languagecode') ?? '').toUpperCase();
+        GlobalX.LanguageCode = ((langCode == 'KO-KR') ? langCode : 'EN-US');
     },
     NewCryptoAction: function (cryptoType, clickAction) {
         const btnX = document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button'));

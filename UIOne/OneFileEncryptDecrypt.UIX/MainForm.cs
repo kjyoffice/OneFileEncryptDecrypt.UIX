@@ -91,7 +91,7 @@ namespace OneFileEncryptDecrypt.UIX
         {
             var psx = this.PSX;
             var mwb = this.MainWebBrowser;
-            var goPath = new Uri($"https://{psx.WebViewHostName}/Index_{psx.LanguageCode}.html");
+            var goPath = new Uri($"https://{psx.WebViewHostName}/Index.html?languagecode={psx.LanguageCode}");
 
             mwb.Source = goPath;
         }
@@ -112,7 +112,7 @@ namespace OneFileEncryptDecrypt.UIX
                     if (cwv != null)
                     {
                         var mappingDirPath = ((psx.IsDebugMode == true) ? @"..\..\WebViewRoot" : @".\WebViewRoot");
-                        var wvjshs = new XModel.WebViewJSHandShake(this.WebViewAction_GetLatestCryptoFileList);
+                        var wvjshs = new XModel.WebViewJSHandShake(psx, this.WebViewAction_GetLatestCryptoFileList);
 
                         cwv.Settings.IsGeneralAutofillEnabled = false;
                         cwv.Settings.IsPasswordAutosaveEnabled = false;
