@@ -29,9 +29,28 @@ type MessageSetXType = {
     WF_NOT_EXIST_FILEITEM:string;
     WF_UNDEFINED_PROCESS:string;
     WF_NOT_EXIST_FILE:string;
+    WF_WRONG_ENCRYPT_FILE:string;
+    WF_WRONG_DECRYPT_FILE:string;
 }
 & {
     [key: string]: string | undefined;
+};
+
+type ReceiveWebVeiwMessageOrderType = {
+    orderID:string;
+    isSuccess:boolean;
+    messageCode:string;
+    supportData:RWMOT_SD_LatestDeleteFileIDType | null;
+    mainData : LatestFileListType | RWMOT_MD_NewCryptoSelectFileType | null;
+};
+
+type RWMOT_SD_LatestDeleteFileIDType = {
+    deleteFileID:string;
+};
+
+type RWMOT_MD_NewCryptoSelectFileType = {
+    filePath:string;
+    isEncrypt:boolean;
 };
 
 const MessageSetX_Hangul:MessageSetXType = {
@@ -51,6 +70,8 @@ const MessageSetX_Hangul:MessageSetXType = {
     WF_NOT_EXIST_FILEITEM : '파일 항목이 없습니다.',
     WF_UNDEFINED_PROCESS : '지정되지 않은 진행입니다.',
     WF_NOT_EXIST_FILE : '파일이 존재하지 않습니다.',
+    WF_WRONG_ENCRYPT_FILE : '암호화 할 파일이 올바르지 않습니다.',
+    WF_WRONG_DECRYPT_FILE : '복호화 할 파일이 올바르지 않습니다.',
 };
 
 const MessageSetX_English:MessageSetXType = {
@@ -70,6 +91,8 @@ const MessageSetX_English:MessageSetXType = {
     WF_NOT_EXIST_FILEITEM : 'Not exist file item.',
     WF_UNDEFINED_PROCESS : 'Undefined process.',
     WF_NOT_EXIST_FILE : 'Not exist file.',
+    WF_WRONG_ENCRYPT_FILE : 'Wrong encrypt file.',
+    WF_WRONG_DECRYPT_FILE : 'Erong decrypt file',    
 };
 
 const ProcessX:ProcessXType = {
@@ -86,17 +109,60 @@ const SendHelloMessage = async function () : Promise<void> {
     console.log(await WVHandShakeX().HelloMessage('Anders'));
 };
 
-const SelectNewEncryptFileAction = function(e:Event) : void {
-    alert('SelectNewEncryptFileAction');
-};
+const NewCryptoX = {
+    EncryptFile : function(e:Event) : void {    
+        NewCryptoX.StartNewCrypto(true);
+    },
+    DecryptFile : function(e:Event) : void {
+        NewCryptoX.StartNewCrypto(false);
+    },
+    StartNewCrypto : async function(isEncrypt:boolean) : Promise<void> {
+        PageBlindX.ShowNow();
+        await WVHandShakeX().NewCryptoNow(isEncrypt);
+    },
+    StartNewCrypto_SelectedFile : async function(dataX:ReceiveWebVeiwMessageOrderType) : Promise<void> {
+        const msgSetX = ProcessX.MessageSetX;
 
-const SelectNewDecryptFileAction = function(e:Event) : void {
-    alert('SelectNewDecryptFileAction');
+        if(dataX.isSuccess == true) {      
+            const md = (dataX.mainData as RWMOT_MD_NewCryptoSelectFileType);
+            const confirmMsgX = ((md.isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
+
+            if(confirm(confirmMsgX) == true) {
+                // 이제 실제 프로그램 실행시키러 콜
+                await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
+            } else {
+                PageBlindX.HideNow();                
+            }
+        } else {
+            alert(msgSetX[dataX.messageCode]);
+            PageBlindX.HideNow();
+        }        
+    },
+    StartNewCrypto_StartProcessResult : function(dataX:ReceiveWebVeiwMessageOrderType) : void {
+        const msgSetX = ProcessX.MessageSetX;
+
+        if(dataX.isSuccess == true) {      
+            // const md = (dataX.mainData as RWMOT_MD_NewCryptoSelectFileType);
+            // const confirmMsgX = ((md.isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
+
+            // if(confirm(confirmMsgX) == true) {
+            //     // 이제 실제 프로그램 실행시키러 콜
+            //     await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
+            // } else {
+            //     PageBlindX.HideNow();                
+            // }
+            console.log('StartNewCrypto_StartProcessResult', dataX);
+            PageBlindX.HideNow();
+        } else {
+            alert(msgSetX[dataX.messageCode]);
+            PageBlindX.HideNow();
+        }          
+    }
 };
 
 const LatestListX = {
-    DisplayList : async function(isExecutePageBlind:boolean) : Promise<void> {
-        PageBlindX.ShowNow(isExecutePageBlind);
+    DisplayList : async function() : Promise<void> {
+        PageBlindX.ShowNow();
 
         const areaX = (document.querySelector('#mainframe .latestlistarea ul') as HTMLUListElement);
         const rawFileList = await WVHandShakeX().GetLatestCryptoFileList();
@@ -118,7 +184,7 @@ const LatestListX = {
             LatestListX.CreateNotExist(areaX, msgSetX);
         }
 
-        PageBlindX.HideNow(isExecutePageBlind);
+        PageBlindX.HideNow();
     },
     AllClear : function(areaX : HTMLUListElement) : void {
         const itemList = (areaX.querySelectorAll('li') as NodeListOf<HTMLLIElement>);
@@ -169,25 +235,39 @@ const LatestListX = {
             const confirmMsgX = ((isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
 
             if(confirm(confirmMsgX) == true) {
-                PageBlindX.ShowNow(true);
+                PageBlindX.ShowNow();
 
                 const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt);
 
-                if(delResult[0] == 'OK') {
-                    // itemX 이거 지우고
-                    // delResult[1]에 해당하는 JSON 데이터 받아온거 파싱해서 뿌리기
-                    // 리스트 맨 위에 하나 올림
-
-                    console.log(delResult[1]);
-                    //await LatestListX.DisplayList(false);
+                if(delResult == 'OK') {                    
+                    // 뭐가 됐던 일단 프로그램은 실행됐음, 
+                    // 결과는 여기서 기다리기엔 언제 끝날지 모르는 프로그램이라서 블라인드만 유지시켜둠
+                    // 이후 ReceiveWebVeiwMessage를 통해 아래의 OrderID, "CRYPTOFILERESULT" 신호 받을때 까지 대기, 신호 받으면 후처리 함
                 } else {
-                    alert(msgSetX[delResult[0]]);
+                    alert(msgSetX[delResult]);
+                    PageBlindX.HideNow();
                 }
-
-                PageBlindX.HideNow(true);
             }
         }
-    },    
+    },
+    CryptoFileNow_Result : function(dataX:ReceiveWebVeiwMessageOrderType) : void {
+        const msgSetX = ProcessX.MessageSetX;
+
+        if(dataX.isSuccess == true) {
+            const sd = (dataX.supportData as RWMOT_SD_LatestDeleteFileIDType);
+            const fileItem = (dataX.mainData as LatestFileListType);
+            const delItemX = (document.getElementById(('fileitemx_' + sd.deleteFileID)) as HTMLLIElement);
+            const areaX = (document.querySelector('#mainframe .latestlistarea ul') as HTMLUListElement);
+            const htmlX = LatestListX.CreateFileItem(fileItem, msgSetX);
+
+            delItemX.remove();
+            areaX.insertAdjacentHTML('afterbegin', htmlX);        
+        } else {
+            alert(msgSetX[dataX.messageCode]);
+        }
+
+        PageBlindX.HideNow();    
+    },
     EncryptFile : function(fileID:string) : void {
         LatestListX.CryptoFileNow(fileID, true);
     },
@@ -201,48 +281,48 @@ const LatestListX = {
             const msgSetX = ProcessX.MessageSetX;
 
             if(confirm(msgSetX.LatestFileItemDeleteQuestion) == true) {
-                PageBlindX.ShowNow(true);
+                PageBlindX.ShowNow();
 
                 const delResult = await WVHandShakeX().DeleteLatestCryptoFile(fileID);
 
                 if(delResult == 'OK') {
                     // 선택된 리스트 지우고
                     itemX.remove();
-
-                    // 리스트가 모두 지워졌을꺼 대비
-                    const areaX = (document.querySelector('#mainframe .latestlistarea ul') as HTMLUListElement);
-                    const itemList = (areaX.querySelectorAll('li') as NodeListOf<HTMLLIElement>);
-
-                    if(itemList.length <= 0) {
-                        LatestListX.CreateNotExist(areaX, msgSetX);
-                    }
+                    // 리스트가 모두 지워졌을 수 있으니 메세지 뿌리기
+                    LatestListX.DeleteItemAfterNotExist(msgSetX);
                 } else {
                     alert(msgSetX[delResult]);
                 }
 
-                PageBlindX.HideNow(true);
+                PageBlindX.HideNow();
             }
+        }
+    },
+    DeleteItemAfterNotExist : function(msgSetX:MessageSetXType) : void {
+        const areaX = (document.querySelector('#mainframe .latestlistarea ul') as HTMLUListElement);
+        const itemList = (areaX.querySelectorAll('li') as NodeListOf<HTMLLIElement>);
+
+        if(itemList.length <= 0) {
+            LatestListX.CreateNotExist(areaX, msgSetX);
         }
     }
 };
 
 const PageBlindX = {
-    ShowAndHide : function(isExecute:boolean, isShow:boolean) {
-        if(isExecute == true) {
-            const blindX = (document.getElementById('pageblind') as HTMLDivElement);
+    ShowAndHide : function(isShow:boolean) {
+        const blindX = (document.getElementById('pageblind') as HTMLDivElement);
 
-            if(isShow == true) {
-                blindX.classList.add('shownow'); 
-            } else {
-                blindX.classList.remove('shownow'); 
-            }        
-        }
+        if(isShow == true) {
+            blindX.classList.add('shownow'); 
+        } else {
+            blindX.classList.remove('shownow'); 
+        }   
     },
-    ShowNow : function(isExecute:boolean) {
-        PageBlindX.ShowAndHide(isExecute, true);
+    ShowNow : function() {
+        PageBlindX.ShowAndHide(true);
     },
-    HideNow : function(isExecute:boolean) {
-        PageBlindX.ShowAndHide(isExecute, false);
+    HideNow : function() {
+        PageBlindX.ShowAndHide(false);
     }    
 };
 
@@ -290,9 +370,9 @@ const PageLoadingX = {
 
         LanguageX.SetLanguageCode(usp);
         LanguageX.SetPageLanguage();
-        PageLoadingX.NewCryptoAction('encrypt', SelectNewEncryptFileAction);
-        PageLoadingX.NewCryptoAction('decrypt', SelectNewDecryptFileAction);
-        LatestListX.DisplayList(true);
+        PageLoadingX.NewCryptoAction('encrypt', NewCryptoX.EncryptFile);
+        PageLoadingX.NewCryptoAction('decrypt', NewCryptoX.DecryptFile);
+        LatestListX.DisplayList();
     },
     NewCryptoAction : function(cryptoType:string, clickAction:EventParameterFNType) {
         const btnX = (document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button')) as HTMLButtonElement);
@@ -302,7 +382,17 @@ const PageLoadingX = {
 };
 
 const ReceiveWebVeiwMessage = function(e:MessageEvent<any>) : void {
-    console.log(e.data, e);
+    const dataX = (e.data as ReceiveWebVeiwMessageOrderType);
+
+    if(dataX.orderID == 'LATESTFILE_CRYPTOFILERESULT') {
+        LatestListX.CryptoFileNow_Result(dataX);
+    } else if(dataX.orderID == 'HIDEPAGEBLIND') {
+        PageBlindX.HideNow();
+    } else if(dataX.orderID == 'NEWCRYPTO_SELECTEDFILE') {
+        NewCryptoX.StartNewCrypto_SelectedFile(dataX);
+    } else if(dataX.orderID == 'NEWCRYPTO_STARTPROCESSRESULT') {
+        NewCryptoX.StartNewCrypto_StartProcessResult(dataX);
+    }
 };
 
 window.addEventListener('load', PageLoadingX.StartInitialize);

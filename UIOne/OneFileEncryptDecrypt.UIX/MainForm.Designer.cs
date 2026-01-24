@@ -30,6 +30,7 @@
         {
             this.MainWebBrowser = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.TestXAction = new System.Windows.Forms.Button();
+            this.SelectCryptoFileDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.MainWebBrowser)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,6 +82,7 @@
         #endregion
         private Microsoft.Web.WebView2.WinForms.WebView2 MainWebBrowser;
         private System.Windows.Forms.Button TestXAction;
+        private System.Windows.Forms.OpenFileDialog SelectCryptoFileDialog;
     }
 }
 

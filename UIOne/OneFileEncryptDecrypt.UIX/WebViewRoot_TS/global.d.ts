@@ -12,7 +12,9 @@ declare global {
                         HelloMessage(name:string) : string;
                         GetLatestCryptoFileList() : string;
                         DeleteLatestCryptoFile(fileID:string) : string;
-                        CryptoLatestFile(fileID:string, isEncrypt:boolean) : string[];
+                        CryptoLatestFile(fileID:string, isEncrypt:boolean) : string;
+                        NewCryptoNow(isEncrypt:boolean) : void;
+                        NewCryptoStartProcess(filePath:string, isEncrypt:boolean) : void;
                     }
                 }
             };

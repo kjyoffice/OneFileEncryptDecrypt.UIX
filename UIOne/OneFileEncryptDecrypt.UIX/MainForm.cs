@@ -124,9 +124,9 @@ namespace OneFileEncryptDecrypt.UIX
             return result;
         }
 
-        private string[] WebViewAction_CryptoLatestFile(string fileID, bool isEncrypt)
+        private string WebViewAction_CryptoLatestFile(string fileID, bool isEncrypt)
         {
-            var result = new string[] { string.Empty, string.Empty };
+            var result = string.Empty;
 
             if (this.IsAllowXID(fileID) == true)
             {
@@ -150,39 +150,147 @@ namespace OneFileEncryptDecrypt.UIX
                     {
                         if (File.Exists(icfi.FilePath) == true)
                         {
-                            // 여기까지 온거면 작업에서 성공이던 실패던 관계없이 리스트에서는 뺀다
+                            // 여기까지 온거면 작업에서 성공이던 실패던 관계없이 일단 리스트에서는 뺀다
                             icfi.ChangeNowAllow();
 
-                            // isEncrypt : true >>> Encrypt Work!
-                            // isEncrypt : false >>> Decrypt Work!
-                            //>
+                            this.WebViewAction_CryptoLatestFile_RunProcess(icfi, isEncrypt);
 
-                            var newFileItem = this.NewLCFI(icfi.FilePath, isEncrypt);
-
-                            result[0] = "OK";
-                            result[1] = Newtonsoft.Json.JsonConvert.SerializeObject(newFileItem);
+                            result = "OK";
                         }
                         else
                         {
-                            result[0] = "WF_NOT_EXIST_FILE";
+                            result = "WF_NOT_EXIST_FILE";
                         }
                     }
                     else
                     {
-                        result[0] = "WF_UNDEFINED_PROCESS";
+                        result = "WF_UNDEFINED_PROCESS";
                     }
                 }
                 else
                 {
-                    result[0] = "WF_NOT_EXIST_FILEITEM";
+                    result = "WF_NOT_EXIST_FILEITEM";
                 }
             }
             else
             {
-                result[0] = "WF_EMPTY_OR_WRONG_FILEID";
+                result = "WF_EMPTY_OR_WRONG_FILEID";
             }
 
             return result;
+        }
+
+        private void WebViewAction_CryptoLatestFile_RunProcess(XModel.LatestCryptoFileItem icfi, bool isEncrypt)
+        {
+            var timerX = new Timer();
+            timerX.Interval = 200;
+            timerX.Tick += (object sender, EventArgs e) =>
+            {
+                timerX.Stop();
+                timerX.Dispose();
+
+                // isEncrypt : true >>> Encrypt Work!
+                // isEncrypt : false >>> Decrypt Work!
+                Debug.WriteLine($"[WebViewAction_CryptoLatestFile_RunProcess] ########## RUN PROCESS ########## {icfi.FilePath} ########## {((isEncrypt == true) ? "암호화" : "복호화")}");
+
+                var wvpmo = new XModel.WebViewPostMessageOrder("LATESTFILE_CRYPTOFILERESULT");
+                wvpmo.SetSupportData(new XModel.DeleteFileIDData(icfi.FileID)); 
+                wvpmo.SetMainData(this.NewLCFI(icfi.FilePath, isEncrypt));
+                wvpmo.SetSuccess();
+
+                this.WebViewPostWebMessage(wvpmo);
+            };
+            timerX.Start();
+        }
+
+        private void WebViewAction_NewCryptoNow(bool isEncrypt)
+        {
+            var timerX = new Timer();
+            timerX.Interval = 200;
+            timerX.Tick += (object sender, EventArgs e) =>
+            {
+                timerX.Stop();
+                timerX.Dispose();
+
+                var encryptedFileExt = XValue.ProcessValue.WorkFileExtension_DoneX;
+                var scfd = this.SelectCryptoFileDialog;
+                // 복호화 할 파일을 선택하는거니 특정 확장자만 표시
+                scfd.Filter = ((isEncrypt == true) ? string.Empty : $"Encrypted file (*{encryptedFileExt})|*{encryptedFileExt}");
+
+                if (scfd.ShowDialog() == DialogResult.OK)
+                {
+                    // 파일 선택했으니 웹폼으로 데이터 던짐
+                    var wvpmo = new XModel.WebViewPostMessageOrder("NEWCRYPTO_SELECTEDFILE");
+
+                    if (File.Exists(scfd.FileName) == true)
+                    {
+                        var fpcmd = new XModel.FilePathCryptoModeData(scfd.FileName, isEncrypt);
+
+                        if (fpcmd.IsAllow == true)
+                        {
+                            wvpmo.SetMainData(fpcmd);
+                            wvpmo.SetSuccess();
+                        }
+                        else
+                        {
+                            wvpmo.SetMessageCode(((fpcmd.IsEncrypt == true) ? "WF_WRONG_ENCRYPT_FILE" : "WF_WRONG_DECRYPT_FILE"));
+                        }
+                    }
+                    else
+                    {
+                        wvpmo.SetMessageCode("WF_NOT_EXIST_FILE");
+                    }
+
+                    this.WebViewPostWebMessage(wvpmo);
+                }
+                else
+                {
+                    // 파일 선택한거 없으니 블라인드 안함
+                    var wvpmo = new XModel.WebViewPostMessageOrder("HIDEPAGEBLIND");
+                    wvpmo.SetSuccess();
+
+                    this.WebViewPostWebMessage(wvpmo);
+                }
+            };
+            timerX.Start();
+        }
+
+        private void WebViewAction_NewCryptoStartProcess(string filePath, bool isEncrypt)
+        {
+            var timerX = new Timer();
+            timerX.Interval = 200;
+            timerX.Tick += (object sender, EventArgs e) =>
+            {
+                timerX.Stop();
+                timerX.Dispose();
+
+                var wvpmo = new XModel.WebViewPostMessageOrder("NEWCRYPTO_STARTPROCESSRESULT");
+                var fpcmd = new XModel.FilePathCryptoModeData(filePath, isEncrypt);
+
+                if (fpcmd.IsAllow == true)
+                {
+                    // isEncrypt : true >>> Encrypt Work!
+                    // isEncrypt : false >>> Decrypt Work!
+                    Debug.WriteLine($"[WebViewAction_NewCryptoStartProcess] ########## RUN PROCESS ########## {filePath} ########## {((isEncrypt == true) ? "암호화" : "복호화")}");
+
+                    wvpmo.SetSuccess();
+                }
+                else
+                {
+                    wvpmo.SetMessageCode("WF_UNDEFINED_PROCESS");
+                }
+
+                this.WebViewPostWebMessage(wvpmo);
+            };
+            timerX.Start();
+        }
+
+        private void WebViewPostWebMessage(XModel.WebViewPostMessageOrder wvpmo)
+        {
+            var cwv = this.MainWebBrowser.CoreWebView2;
+            var jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(wvpmo);
+
+            cwv.PostWebMessageAsJson(jsonText);
         }
 
         // -------------------------------------------------
@@ -240,7 +348,14 @@ namespace OneFileEncryptDecrypt.UIX
                     if (cwv != null)
                     {
                         var mappingDirPath = ((psx.IsDebugMode == true) ? @"..\..\WebViewRoot" : @".\WebViewRoot");
-                        var wvjshs = new XModel.WebViewJSHandShake(psx, this.WebViewAction_GetLatestCryptoFileList, this.WebViewAction_DeleteLatestCryptoFile, this.WebViewAction_CryptoLatestFile);
+                        var wvjshs = new XModel.WebViewJSHandShake(
+                            psx, 
+                            this.WebViewAction_GetLatestCryptoFileList, 
+                            this.WebViewAction_DeleteLatestCryptoFile, 
+                            this.WebViewAction_CryptoLatestFile, 
+                            this.WebViewAction_NewCryptoNow,
+                            this.WebViewAction_NewCryptoStartProcess
+                        );
 
                         cwv.Settings.IsGeneralAutofillEnabled = false;
                         cwv.Settings.IsPasswordAutosaveEnabled = false;
@@ -254,8 +369,6 @@ namespace OneFileEncryptDecrypt.UIX
                         cwv.SetVirtualHostNameToFolderMapping(psx.WebViewHostName, mappingDirPath, CoreWebView2HostResourceAccessKind.Allow);
                         // 여기 "wvHandShake"와 WebViewRoot_TS 파일의 WVHandShakeX Method 내 hostObjects의 "wvHandShake"가 같아야 한다
                         cwv.AddHostObjectToScript("wvHandShake", wvjshs);
-
-                        //Debug.WriteLine("MainWebBrowser_CoreWebView2InitializationCompleted");
                     }
                     else
                     {
@@ -275,16 +388,7 @@ namespace OneFileEncryptDecrypt.UIX
 
         private void TestXAction_Click(object sender, EventArgs e)
         {
-            var psx = this.PSX;
-            var cwv = this.MainWebBrowser.CoreWebView2;
-            //Debug.WriteLine("MainForm.TestXAction_Click");
-
-            /*
-            cwv.PostWebMessageAsString("Hello World");
-            cwv.PostWebMessageAsJson(@"{ ""hello"" : ""World"" }");
-            */
-
-            //Debug.WriteLine(this.WebViewAction_GetLatestCryptoFileList());
+            // Empty
         }
     }
 }

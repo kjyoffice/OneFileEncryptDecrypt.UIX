@@ -16,25 +16,32 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         private ProcessSupportX PSX { get; set; }
         private Func<string> GetLatestCryptoFileListAction { get; set; }
         private Func<string, string> DeleteLatestCryptoFileAction { get; set; }
-        private Func<string, bool, string[]> CryptoLatestFileAction { get; set; }
+        private Func<string, bool, string> CryptoLatestFileAction { get; set; }
+        private Action<bool> NewCryptoNowAction { get; set; }
+        private Action<string, bool> NewCryptoStartProcessAction { get; set; }
 
         // -----------------------------------------------------------------
 
-        public WebViewJSHandShake(ProcessSupportX psx, Func<string> getLatestCryptoFileListAction, Func<string, string> deleteLatestCryptoFileAction, Func<string, bool, string[]> cryptoLatestFileAction)
+        public WebViewJSHandShake(
+            ProcessSupportX psx, 
+            Func<string> getLatestCryptoFileListAction, 
+            Func<string, string> deleteLatestCryptoFileAction, 
+            Func<string, bool, string> cryptoLatestFileAction, 
+            Action<bool> newCryptoNowAction,
+            Action<string, bool> newCryptoStartProcessAction
+        )
         {
             this.PSX = psx;
             this.GetLatestCryptoFileListAction = getLatestCryptoFileListAction;
             this.DeleteLatestCryptoFileAction = deleteLatestCryptoFileAction;
             this.CryptoLatestFileAction = cryptoLatestFileAction;
+            this.NewCryptoNowAction = newCryptoNowAction;
+            this.NewCryptoStartProcessAction = newCryptoStartProcessAction;
         }
 
         public string HelloMessage(string name)
         {
-            var result = $"Hello~ {name}!";
-
-            //Debug.WriteLine(("WebViewJSHandShake.HelloMessage >>> " + result));
-
-            return result;
+            return $"Hello~ {name}!";
         }
 
         public string GetLatestCryptoFileList()
@@ -47,9 +54,19 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             return this.DeleteLatestCryptoFileAction(fileID);
         }
 
-        public string[] CryptoLatestFile(string fileID, bool isEncrypt)
+        public string CryptoLatestFile(string fileID, bool isEncrypt)
         {
             return this.CryptoLatestFileAction(fileID, isEncrypt);
+        }
+
+        public void NewCryptoNow(bool isEncrypt)
+        {
+            this.NewCryptoNowAction(isEncrypt);
+        }
+
+        public void NewCryptoStartProcess(string filePath, bool isEncrypt)
+        {
+            this.NewCryptoStartProcessAction(filePath, isEncrypt);
         }
     }
 }
