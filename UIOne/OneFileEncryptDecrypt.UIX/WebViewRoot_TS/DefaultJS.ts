@@ -7,9 +7,44 @@
 
 type EventParameterFNType = (e:Event) => void;
 
-const ProcessX = {
-    LanguageCode : '',
-    IsHangul : true
+type ProcessXType = {
+    LanguageCode : string;
+    MessageSetX : MessageSetXType;
+};
+
+type MessageSetXType = {
+    NewEncryptButtonText:string;
+    NewDecryptButtonText:string;
+    LatestCryptoFile_NotExist:string;
+    LatestCryptoFile_Encrypt:string;
+    LatestCryptoFile_Decrypy:string;
+    LatestCryptoFile_Delete:string;
+}
+& {
+    [key: string]: string | undefined;
+};
+
+const MessageSetX_Hangul:MessageSetXType = {
+    NewEncryptButtonText:'암호화 파일 선택',
+    NewDecryptButtonText:'복호화 파일 선택',
+    LatestCryptoFile_NotExist : '항목이 없습니다.',
+    LatestCryptoFile_Encrypt : '암호화',
+    LatestCryptoFile_Decrypy : '복호화',
+    LatestCryptoFile_Delete : '삭제',
+};
+
+const MessageSetX_English:MessageSetXType = {
+    NewEncryptButtonText:'Select encrypt file',
+    NewDecryptButtonText:'Select decrypt file',
+    LatestCryptoFile_NotExist : 'Not exist item',
+    LatestCryptoFile_Encrypt : 'Encrypt',
+    LatestCryptoFile_Decrypy : 'Decrypt',
+    LatestCryptoFile_Delete : 'Delete',
+};
+
+const ProcessX:ProcessXType = {
+    LanguageCode : 'KO-KR',
+    MessageSetX : MessageSetX_Hangul
 };
 
 const WVHandShakeX = function() {
@@ -77,17 +112,18 @@ const LatestListX = {
     CreateNotExist : function(areaX:HTMLUListElement) : void {
         var itemX = (document.createElement('LI') as HTMLLIElement);
         itemX.classList.add('emptyitembox');
-        itemX.innerText = areaX.dataset.emptyitembox!;
+        itemX.innerText = ProcessX.MessageSetX.LatestCryptoFile_NotExist;
 
         areaX.appendChild(itemX);
     },
     CreateFileItem : function(areaX:HTMLUListElement, fileItem:LatestFileListType) : void {
         // 암호화면, 복호화로 표시
         // 암호화가 아니면(=복호화) 암호화로 표시
+        const msgSetX = ProcessX.MessageSetX;
         const cryptoBoxHTML = (
             (fileItem.isEncrypt == true) ? 
-            ('<div class="decryptaction"><button type="button" class="decryptbutton" onclick="FileItemDecryptAction(\'' + fileItem.fileID + '\');">' + areaX.dataset.decryptbutton + '</button></div>') : 
-            ('<div class="encryptaction"><button type="button" class="encryptbutton" onclick="FileItemEncryptAction(\'' + fileItem.fileID + '\');">' + areaX.dataset.encryptbutton + '</button></div>')    
+            ('<div class="decryptaction"><button type="button" class="decryptbutton" onclick="FileItemDecryptAction(\'' + fileItem.fileID + '\');">' + msgSetX.LatestCryptoFile_Encrypt + '</button></div>') : 
+            ('<div class="encryptaction"><button type="button" class="encryptbutton" onclick="FileItemEncryptAction(\'' + fileItem.fileID + '\');">' + msgSetX.LatestCryptoFile_Decrypt + '</button></div>')    
         );
         const htmlX = `
             <li id="fileitemx_${fileItem.fileID}" class="itemx">
@@ -97,7 +133,7 @@ const LatestListX = {
                 </div>
                 <div class="cryptobox">${cryptoBoxHTML}</div>
                 <div class="deletebox">
-                    <div class="deleteaction"><button type="button" onclick="FileItemDeleteAction(\'${fileItem.fileID}\');">${areaX.dataset.deletebutton}</button></div>
+                    <div class="deleteaction"><button type="button" onclick="FileItemDeleteAction(\'${fileItem.fileID}\');">${msgSetX.LatestCryptoFile_Delete}</button></div>
                 </div>
             </li>      
         `;
@@ -124,25 +160,52 @@ const PageBlindX = {
     }    
 };
 
+const LanguageX = {
+    SetLanguageCode : function(usp:URLSearchParams) : void {
+        const langCode = (usp.get('languagecode') ?? '').toUpperCase();
+
+        if(langCode == 'EN-US') {
+            ProcessX.LanguageCode = langCode;
+            ProcessX.MessageSetX = MessageSetX_English;
+        }
+        // else - KO-KR
+    },
+    SetPageLanguage : function() : void {
+        const langXList = (document.querySelectorAll('.languagex') as NodeListOf<HTMLElement>);
+        
+        langXList.forEach(
+            function(eleX:HTMLElement) : void {
+                eleX.innerText = LanguageX.GetMessage(eleX, 'languagextext');
+            }
+        );
+    },
+    GetMessage : function(eleX:HTMLElement, codeName:string) : string {
+        const msgCode = eleX.dataset[codeName];
+        let result = '';
+
+        if(msgCode != undefined) {
+            const msgX = ProcessX.MessageSetX[msgCode];
+         
+            if(msgX != undefined) {            
+                result = msgX.toString();
+            } else {
+                result = ('NOT_EXIST_MESSAGE_CODE - ' + msgCode);            
+            }
+        }
+
+        return result;
+    }
+};
+
 const PageLoadingX = {
     StartInitialize : function(e:Event) : void {
         const usp = new URLSearchParams(location.search);
 
-        PageLoadingX.SetLanguageCode(usp);
+        LanguageX.SetLanguageCode(usp);
+        LanguageX.SetPageLanguage();
         PageLoadingX.NewCryptoAction('encrypt', SelectNewEncryptFileAction);
         PageLoadingX.NewCryptoAction('decrypt', SelectNewDecryptFileAction);
         LatestListX.DisplayList();    
-    },
-    SetLanguageCode : function(usp:URLSearchParams) : void {
-        const langCode = (usp.get('languagecode') ?? '').toUpperCase();
-
-        if(langCode == 'KO-KR') {
-            ProcessX.LanguageCode = langCode;
-            ProcessX.IsHangul = true;        
-        } else {
-            ProcessX.LanguageCode = 'EN-US';
-            ProcessX.IsHangul = false;
-        }
     },
     NewCryptoAction : function(cryptoType:string, clickAction:EventParameterFNType) {
         const btnX = (document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button')) as HTMLButtonElement);
