@@ -15,13 +15,17 @@ namespace OneFileEncryptDecrypt.UIX.XModel
     {
         private ProcessSupportX PSX { get; set; }
         private Func<string> GetLatestCryptoFileListAction { get; set; }
+        private Func<string, string> DeleteLatestCryptoFileAction { get; set; }
+        private Func<string, bool, string[]> CryptoLatestFileAction { get; set; }
 
         // -----------------------------------------------------------------
 
-        public WebViewJSHandShake(ProcessSupportX psx, Func<string> getLatestCryptoFileListAction)
+        public WebViewJSHandShake(ProcessSupportX psx, Func<string> getLatestCryptoFileListAction, Func<string, string> deleteLatestCryptoFileAction, Func<string, bool, string[]> cryptoLatestFileAction)
         {
             this.PSX = psx;
             this.GetLatestCryptoFileListAction = getLatestCryptoFileListAction;
+            this.DeleteLatestCryptoFileAction = deleteLatestCryptoFileAction;
+            this.CryptoLatestFileAction = cryptoLatestFileAction;
         }
 
         public string HelloMessage(string name)
@@ -36,6 +40,16 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         public string GetLatestCryptoFileList()
         {
             return this.GetLatestCryptoFileListAction();
+        }
+
+        public string DeleteLatestCryptoFile(string fileID)
+        {
+            return this.DeleteLatestCryptoFileAction(fileID);
+        }
+
+        public string[] CryptoLatestFile(string fileID, bool isEncrypt)
+        {
+            return this.CryptoLatestFileAction(fileID, isEncrypt);
         }
     }
 }

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Microsoft.Web.WebView2.WinForms;
 using Microsoft.Web.WebView2.Core;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace OneFileEncryptDecrypt.UIX
 {
@@ -32,8 +33,17 @@ namespace OneFileEncryptDecrypt.UIX
     public partial class MainForm : Form
     {
         private XModel.ProcessSupportX PSX { get; set; }
+        private List<XModel.LatestCryptoFileItem> LCFIList { get; set; }
 
         // -------------------------------------------------
+
+        private void InitializeDebugTimeControl(XModel.ProcessSupportX psx)
+        {
+            if (psx.IsDebugMode == true)
+            {
+                this.TestXAction.Visible = true;
+            }
+        }
 
         private List<XModel.LatestCryptoFileItem> GetLatestCryptoFileList(XModel.ProcessSupportX psx)
         {
@@ -44,7 +54,7 @@ namespace OneFileEncryptDecrypt.UIX
             {
                 var jsonText = File.ReadAllText(filePath, Encoding.UTF8);
                 var jsonData = Newtonsoft.Json.JsonConvert.DeserializeObject<XModel_Json.LatestCryptoFileItem_Json[]>(jsonText);
-                var fileList = (jsonData?.Select(x => new XModel.LatestCryptoFileItem(x)) ?? new List<XModel.LatestCryptoFileItem>()).Where(x => (x.IsAllow == true));
+                var fileList = (jsonData?.Select(x => new XModel.LatestCryptoFileItem(x)) ?? new List<XModel.LatestCryptoFileItem>()).Where(x => (x.IsAllow == true)).ToList();
 
                 result.AddRange(fileList);
             }
@@ -52,21 +62,125 @@ namespace OneFileEncryptDecrypt.UIX
             return result;
         }
 
-        private void InitializeDebugTimeControl(XModel.ProcessSupportX psx)
+        private bool IsAllowXID(string source)
         {
-            if (psx.IsDebugMode == true)
-            {
-                this.TestXAction.Visible = true;
-            }
+            return ((source != string.Empty) && (Regex.IsMatch(source, "^[a-zA-Z0-9]+$", RegexOptions.IgnoreCase) == true));
+        }
+
+        private XModel.LatestCryptoFileItem GetUseLCFI(string fileID)
+        {
+            return this.LCFIList.Where(x => (x.IsMatchAllowFileID(fileID) == true)).FirstOrDefault();
+        }
+
+        private XModel.LatestCryptoFileItem NewLCFI(string filePath, bool isEncrypt)
+        {
+            var encryptedFileExt = XValue.ProcessValue.WorkFileExtension_DoneX;
+            var lcfiList = this.LCFIList;
+            var filePathUse = (
+                (isEncrypt == true) ? 
+                (filePath + encryptedFileExt) : 
+                (Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath)))
+            );
+            var result = new XModel.LatestCryptoFileItem(filePathUse);
+
+            lcfiList.Add(result);
+
+            return result;
         }
 
         // -------------------------------------------------
 
         private string WebViewAction_GetLatestCryptoFileList()
         {
-            var psx = this.PSX;
-            var lcfiList = this.GetLatestCryptoFileList(psx);
+            var lcfiList = this.LCFIList.Where(x => (x.IsAllow == true)).Reverse().Take(20).ToList();
             var result = Newtonsoft.Json.JsonConvert.SerializeObject(lcfiList);
+
+            return result;
+        }
+
+        private string WebViewAction_DeleteLatestCryptoFile(string fileID)
+        {
+            var result = string.Empty;
+
+            if (this.IsAllowXID(fileID) == true)
+            {
+                var icfi = this.GetUseLCFI(fileID);
+
+                if (icfi != null)
+                {
+                    icfi.ChangeNowAllow();
+                    result = "OK";
+                }
+                else
+                {
+                    result = "WF_NOT_EXIST_FILEITEM";
+                }
+            }
+            else
+            {
+                result = "WF_EMPTY_OR_WRONG_FILEID";
+            }
+
+            return result;
+        }
+
+        private string[] WebViewAction_CryptoLatestFile(string fileID, bool isEncrypt)
+        {
+            var result = new string[] { string.Empty, string.Empty };
+
+            if (this.IsAllowXID(fileID) == true)
+            {
+                var icfi = this.GetUseLCFI(fileID);
+
+                if (icfi != null)
+                {
+                    // 여기 파라메터에 넘어오는 isEncrypt는 icfi.IsEncrypt와 반대다
+                    // 웹뷰에서 리스트 뿌릴 때
+                    // icfi.IsEncrypt가 true면 암호화 된 파일이니 복호화를 해야하고 
+                    // icfi.IsEncrypt가 false면 복호화 된 파일이 암호화를 해야한다
+                    // 그래서 웹뷰에서 선택은 icfi.IsEncrypt와 반대로 하게되는거고 여기까지 온게 파라메터의 isEncrypt다 
+
+                    // 즉 이 메소드의 파라메터, isEncrypt대로 진행하면 된다!
+                    var isAllow = (
+                        ((icfi.IsEncrypt == true) && (isEncrypt == false)) ||
+                        ((icfi.IsEncrypt == false) && (isEncrypt == true))
+                    );
+
+                    if (isAllow == true)
+                    {
+                        if (File.Exists(icfi.FilePath) == true)
+                        {
+                            // 여기까지 온거면 작업에서 성공이던 실패던 관계없이 리스트에서는 뺀다
+                            icfi.ChangeNowAllow();
+
+                            // isEncrypt : true >>> Encrypt Work!
+                            // isEncrypt : false >>> Decrypt Work!
+                            //>
+
+                            var newFileItem = this.NewLCFI(icfi.FilePath, isEncrypt);
+
+                            result[0] = "OK";
+                            result[1] = Newtonsoft.Json.JsonConvert.SerializeObject(newFileItem);
+                        }
+                        else
+                        {
+                            result[0] = "WF_NOT_EXIST_FILE";
+                        }
+                    }
+                    else
+                    {
+                        result[0] = "WF_UNDEFINED_PROCESS";
+                    }
+                }
+                else
+                {
+                    result[0] = "WF_NOT_EXIST_FILEITEM";
+                }
+            }
+            else
+            {
+                result[0] = "WF_EMPTY_OR_WRONG_FILEID";
+            }
 
             return result;
         }
@@ -78,6 +192,7 @@ namespace OneFileEncryptDecrypt.UIX
             this.PSX = psx;
             this.InitializeComponent();
             this.InitializeDebugTimeControl(psx);
+            this.LCFIList = this.GetLatestCryptoFileList(psx);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -96,6 +211,19 @@ namespace OneFileEncryptDecrypt.UIX
             mwb.Source = goPath;
         }
 
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            var psx = this.PSX;
+            var lcfiList = this.LCFIList.Where(x => (x.IsAllow == true)).ToList();
+
+            Debug.WriteLine("최근 파일 리스트 저장해라");
+        }
+
         private void MainWebBrowser_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
             var psx = this.PSX;
@@ -112,7 +240,7 @@ namespace OneFileEncryptDecrypt.UIX
                     if (cwv != null)
                     {
                         var mappingDirPath = ((psx.IsDebugMode == true) ? @"..\..\WebViewRoot" : @".\WebViewRoot");
-                        var wvjshs = new XModel.WebViewJSHandShake(psx, this.WebViewAction_GetLatestCryptoFileList);
+                        var wvjshs = new XModel.WebViewJSHandShake(psx, this.WebViewAction_GetLatestCryptoFileList, this.WebViewAction_DeleteLatestCryptoFile, this.WebViewAction_CryptoLatestFile);
 
                         cwv.Settings.IsGeneralAutofillEnabled = false;
                         cwv.Settings.IsPasswordAutosaveEnabled = false;

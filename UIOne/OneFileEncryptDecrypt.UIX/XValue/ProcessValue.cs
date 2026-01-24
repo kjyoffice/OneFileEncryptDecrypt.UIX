@@ -8,22 +8,6 @@ namespace OneFileEncryptDecrypt.UIX.XValue
 {
     public class ProcessValue
     {
-        //public static string ApplicationCallSign
-        //{
-        //    get
-        //    {
-        //        return "OFED";
-        //    }
-        //}
-
-        //public static string WorkFileExtension
-        //{
-        //    get
-        //    {
-        //        return ".ofed";
-        //    }
-        //}
-
         public static string WorkFileExtension_DoneX
         {
             get

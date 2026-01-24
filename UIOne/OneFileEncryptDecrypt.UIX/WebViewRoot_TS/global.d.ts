@@ -11,6 +11,8 @@ declare global {
                     wvHandShake : {
                         HelloMessage(name:string) : string;
                         GetLatestCryptoFileList() : string;
+                        DeleteLatestCryptoFile(fileID:string) : string;
+                        CryptoLatestFile(fileID:string, isEncrypt:boolean) : string[];
                     }
                 }
             };
