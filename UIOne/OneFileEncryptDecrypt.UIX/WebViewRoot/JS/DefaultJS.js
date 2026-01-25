@@ -78,12 +78,7 @@ const NewCryptoX = {
             const passwordMsgX = ((md.isEncrypt == true) ? msgSetX.PleaseInputEncryptPassword : msgSetX.PleaseInputDecryptPassword);
             SimpleDialogX.PasswordBox(confirmMsgX, passwordMsgX, async function (isConfirm, cryptoPassword) {
                 if (isConfirm == true) {
-                    console.log(cryptoPassword);
-                    console.log(cryptoPassword);
-                    console.log(cryptoPassword);
-                    console.log(cryptoPassword);
-                    console.log(cryptoPassword);
-                    await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
+                    await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt, cryptoPassword);
                 }
                 else {
                     DefaultPageBlindX.HideNow();
@@ -167,13 +162,8 @@ const LatestListX = {
             const passwordMsgX = ((isEncrypt == true) ? msgSetX.PleaseInputEncryptPassword : msgSetX.PleaseInputDecryptPassword);
             SimpleDialogX.PasswordBox(confirmMsgX, passwordMsgX, async function (isConfirm, cryptoPassword) {
                 if (isConfirm == true) {
-                    console.log(cryptoPassword);
-                    console.log(cryptoPassword);
-                    console.log(cryptoPassword);
-                    console.log(cryptoPassword);
-                    console.log(cryptoPassword);
                     DefaultPageBlindX.ShowNow();
-                    const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt);
+                    const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt, cryptoPassword);
                     if (delResult == 'OK') {
                     }
                     else {

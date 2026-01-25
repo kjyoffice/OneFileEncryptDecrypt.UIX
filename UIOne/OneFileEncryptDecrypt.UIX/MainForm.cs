@@ -388,6 +388,12 @@ namespace OneFileEncryptDecrypt.UIX
 
         private void TestXAction_Click(object sender, EventArgs e)
         {
+            Debug.WriteLine(XAppConfig.AppSettings.OFEDAppPath);
+
+            //Process.Start(XAppConfig.AppSettings.OFEDAppPath, "OneFileEncryptDecrypt encrypt -p 0123456789 -f d:\\Download\\Dummy\\XYZ.JPG");
+            //Process.Start(XAppConfig.AppSettings.OFEDAppPath, "OneFileEncryptDecrypt decrypt -p 0123456789 -f d:\\Download\\Dummy\\XYZ.JPG.ofedx");
+
+
             // Empty
         }
     }

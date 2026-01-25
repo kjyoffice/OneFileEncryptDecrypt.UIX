@@ -276,7 +276,7 @@ const LatestListX = {
                     if(isConfirm == true) {
                         DefaultPageBlindX.ShowNow();
 
-                        const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt);
+                        const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt, cryptoPassword);
 
                         if(delResult == 'OK') {                    
                             // 뭐가 됐던 일단 프로그램은 실행됐음, 
