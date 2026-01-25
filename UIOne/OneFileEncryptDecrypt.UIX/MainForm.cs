@@ -349,6 +349,11 @@ namespace OneFileEncryptDecrypt.UIX
         {
             this.PSX = psx;
             this.InitializeComponent();
+            this.Text = psx.AppName;
+            this.Icon = XResource.DefaultResource.DefaultIcon;
+            this.MainNotifyIcon.Icon = XResource.DefaultResource.DefaultIcon;
+            this.MainNotifyIcon.Text = psx.AppName;
+            this.MNICMS_Exit.Text = ((psx.IsHangul == true) ? "종료" : "Exit");
             this.InitializeDebugTimeControl(psx);
             this.LCFIList = this.GetLatestCryptoFileList(psx);
         }
@@ -367,6 +372,14 @@ namespace OneFileEncryptDecrypt.UIX
             var goPath = new Uri($"https://{psx.WebViewHostName}/Index.html?languagecode={psx.LanguageCode}");
 
             mwb.Source = goPath;
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                this.Visible = false;
+            }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -389,6 +402,15 @@ namespace OneFileEncryptDecrypt.UIX
 
             // 현재 리스트의 파일정보 기록
             File.WriteAllText(psx.LatestCryptoFilePath, jsonText, Encoding.UTF8);
+        }
+
+        private void MainNotifyIcon_DoubleClick(object sender, EventArgs e)
+        {
+            if (this.Visible == false)
+            {
+                this.Visible = true;
+                this.WindowState = FormWindowState.Normal;
+            }
         }
 
         private void MainWebBrowser_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
@@ -486,6 +508,11 @@ namespace OneFileEncryptDecrypt.UIX
             */
 
             // Empty
+        }
+
+        private void MNICMS_Exit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

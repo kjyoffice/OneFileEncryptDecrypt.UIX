@@ -28,10 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.MainWebBrowser = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.TestXAction = new System.Windows.Forms.Button();
             this.SelectCryptoFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.MainNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.MNI_ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.MNICMS_Exit = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.MainWebBrowser)).BeginInit();
+            this.MNI_ContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainWebBrowser
@@ -58,6 +63,27 @@
             this.TestXAction.Visible = false;
             this.TestXAction.Click += new System.EventHandler(this.TestXAction_Click);
             // 
+            // MainNotifyIcon
+            // 
+            this.MainNotifyIcon.ContextMenuStrip = this.MNI_ContextMenuStrip;
+            this.MainNotifyIcon.Text = "MainNotifyIcon";
+            this.MainNotifyIcon.Visible = true;
+            this.MainNotifyIcon.DoubleClick += new System.EventHandler(this.MainNotifyIcon_DoubleClick);
+            // 
+            // MNI_ContextMenuStrip
+            // 
+            this.MNI_ContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MNICMS_Exit});
+            this.MNI_ContextMenuStrip.Name = "contextMenuStrip1";
+            this.MNI_ContextMenuStrip.Size = new System.Drawing.Size(181, 48);
+            // 
+            // MNICMS_Exit
+            // 
+            this.MNICMS_Exit.Name = "MNICMS_Exit";
+            this.MNICMS_Exit.Size = new System.Drawing.Size(180, 22);
+            this.MNICMS_Exit.Text = "Exit";
+            this.MNICMS_Exit.Click += new System.EventHandler(this.MNICMS_Exit_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -69,12 +95,14 @@
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OneFileEncryptDecrypt.UIX";
+            this.Text = "OneFileEncryptDecrypt";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Shown += new System.EventHandler(this.MainForm_Shown);
+            this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.MainWebBrowser)).EndInit();
+            this.MNI_ContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -83,6 +111,9 @@
         private Microsoft.Web.WebView2.WinForms.WebView2 MainWebBrowser;
         private System.Windows.Forms.Button TestXAction;
         private System.Windows.Forms.OpenFileDialog SelectCryptoFileDialog;
+        private System.Windows.Forms.NotifyIcon MainNotifyIcon;
+        private System.Windows.Forms.ContextMenuStrip MNI_ContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem MNICMS_Exit;
     }
 }
 

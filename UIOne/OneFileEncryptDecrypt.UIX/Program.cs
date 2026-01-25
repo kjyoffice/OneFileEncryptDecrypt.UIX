@@ -35,12 +35,10 @@ namespace OneFileEncryptDecrypt.UIX
             Program.ChangeDebugMode();
 
             var asmName = Assembly.GetExecutingAssembly().GetName().Name;
-
             var isDebugMode = Program.IsDebugMode;
             var ofedAppPath = XAppConfig.AppSettings.OFEDAppPath;
-            var buildType = ((isDebugMode == true) ? "DEBUG" : "RELEASE");
-            var mutexName = (asmName + "_" + buildType);
-            var psx = new XModel.ProcessSupportX(isDebugMode);
+            var mutexName = (asmName.Replace(".", "_") + "_" + ((isDebugMode == true) ? "DEBUG" : "RELEASE"));
+            var psx = new XModel.ProcessSupportX("OneFileEncryptDecrypt", isDebugMode);
 
             if ((ofedAppPath != string.Empty) && (File.Exists(ofedAppPath) == true))
             {
@@ -56,7 +54,7 @@ namespace OneFileEncryptDecrypt.UIX
                     {
                         var msgX = ((psx.IsHangul == true) ? "프로그램이 이미 실행중입니다." : "Program is already running.");
 
-                        MessageBox.Show(msgX, asmName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(msgX, psx.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
                     mt.Close();
@@ -66,7 +64,7 @@ namespace OneFileEncryptDecrypt.UIX
             {
                 var msgX = ((psx.IsHangul == true) ? "OFED 프로그램이 없습니다." : "Not exist OFED application.");
 
-                MessageBox.Show(msgX, asmName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(msgX, psx.AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
     }

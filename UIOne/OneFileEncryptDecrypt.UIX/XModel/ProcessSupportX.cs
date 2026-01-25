@@ -10,6 +10,7 @@ namespace OneFileEncryptDecrypt.UIX.XModel
 {
     public class ProcessSupportX
     {
+        public string AppName { get; private set; }
         public string LanguageCode { get; private set; }
         public bool IsDebugMode { get; private set; }
         public string WebViewHostName { get; private set; }
@@ -19,11 +20,12 @@ namespace OneFileEncryptDecrypt.UIX.XModel
 
         // ----------------------------------------------------------
 
-        public ProcessSupportX(bool isDebugMode)
+        public ProcessSupportX(string appName, bool isDebugMode)
         {
             var languageCode = CultureInfo.CurrentUICulture.Name.ToUpper();
             var inStorageDirPath = ((isDebugMode == true) ? @"..\..\InStorage" : @".\InStorage");
 
+            this.AppName = ((isDebugMode == true) ? $"{appName} (Debug)" : appName);
             this.LanguageCode = languageCode;
             this.IsDebugMode = isDebugMode;
             this.WebViewHostName = (XAppConfig.AppSettings.WebView2VirtualHostName + ".localapp");

@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>DefaultIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,6 +68,11 @@
     <Compile Include="XModel\WebViewJSHandShake.cs" />
     <Compile Include="XModel\WebViewPostMessageOrder.cs" />
     <Compile Include="XModel_Json\LatestCryptoFileItem_Json.cs" />
+    <Compile Include="XResource\DefaultResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DefaultResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="XValue\ProcessValue.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -78,6 +86,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="XResource\DefaultResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DefaultResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="InStorage\LatestCryptoFile.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -116,6 +128,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="DefaultIcon.ico" />
     <Content Include="WebViewRoot\CSS\DefaultStyle.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
