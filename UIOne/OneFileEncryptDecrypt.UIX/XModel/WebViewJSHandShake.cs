@@ -16,9 +16,9 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         private ProcessSupportX PSX { get; set; }
         private Func<string> GetLatestCryptoFileListAction { get; set; }
         private Func<string, string> DeleteLatestCryptoFileAction { get; set; }
-        private Func<string, bool, string> CryptoLatestFileAction { get; set; }
+        private Func<string, bool, string, string> CryptoLatestFileAction { get; set; }
         private Action<bool> NewCryptoNowAction { get; set; }
-        private Action<string, bool> NewCryptoStartProcessAction { get; set; }
+        private Action<string, bool, string> NewCryptoStartProcessAction { get; set; }
 
         // -----------------------------------------------------------------
 
@@ -26,9 +26,9 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             ProcessSupportX psx, 
             Func<string> getLatestCryptoFileListAction, 
             Func<string, string> deleteLatestCryptoFileAction, 
-            Func<string, bool, string> cryptoLatestFileAction, 
+            Func<string, bool, string, string> cryptoLatestFileAction, 
             Action<bool> newCryptoNowAction,
-            Action<string, bool> newCryptoStartProcessAction
+            Action<string, bool, string> newCryptoStartProcessAction
         )
         {
             this.PSX = psx;
@@ -54,9 +54,9 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             return this.DeleteLatestCryptoFileAction(fileID);
         }
 
-        public string CryptoLatestFile(string fileID, bool isEncrypt)
+        public string CryptoLatestFile(string fileID, bool isEncrypt, string cryptoPassword)
         {
-            return this.CryptoLatestFileAction(fileID, isEncrypt);
+            return this.CryptoLatestFileAction(fileID, isEncrypt, cryptoPassword);
         }
 
         public void NewCryptoNow(bool isEncrypt)
@@ -64,9 +64,9 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             this.NewCryptoNowAction(isEncrypt);
         }
 
-        public void NewCryptoStartProcess(string filePath, bool isEncrypt)
+        public void NewCryptoStartProcess(string filePath, bool isEncrypt, string cryptoPassword)
         {
-            this.NewCryptoStartProcessAction(filePath, isEncrypt);
+            this.NewCryptoStartProcessAction(filePath, isEncrypt, cryptoPassword);
         }
     }
 }

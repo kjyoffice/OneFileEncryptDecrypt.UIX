@@ -124,7 +124,7 @@ namespace OneFileEncryptDecrypt.UIX
             return result;
         }
 
-        private string WebViewAction_CryptoLatestFile(string fileID, bool isEncrypt)
+        private string WebViewAction_CryptoLatestFile(string fileID, bool isEncrypt, string cryptoPassword)
         {
             var result = string.Empty;
 
@@ -153,7 +153,7 @@ namespace OneFileEncryptDecrypt.UIX
                             // 여기까지 온거면 작업에서 성공이던 실패던 관계없이 일단 리스트에서는 뺀다
                             icfi.ChangeNowAllow();
 
-                            this.WebViewAction_CryptoLatestFile_RunProcess(icfi, isEncrypt);
+                            this.WebViewAction_CryptoLatestFile_RunProcess(icfi, isEncrypt, cryptoPassword);
 
                             result = "OK";
                         }
@@ -180,7 +180,7 @@ namespace OneFileEncryptDecrypt.UIX
             return result;
         }
 
-        private void WebViewAction_CryptoLatestFile_RunProcess(XModel.LatestCryptoFileItem icfi, bool isEncrypt)
+        private void WebViewAction_CryptoLatestFile_RunProcess(XModel.LatestCryptoFileItem icfi, bool isEncrypt, string cryptoPassword)
         {
             var timerX = new Timer();
             timerX.Interval = 200;
@@ -191,7 +191,7 @@ namespace OneFileEncryptDecrypt.UIX
 
                 // isEncrypt : true >>> Encrypt Work!
                 // isEncrypt : false >>> Decrypt Work!
-                Debug.WriteLine($"[WebViewAction_CryptoLatestFile_RunProcess] ########## RUN PROCESS ########## {icfi.FilePath} ########## {((isEncrypt == true) ? "암호화" : "복호화")}");
+                Debug.WriteLine($"[WebViewAction_CryptoLatestFile_RunProcess] ########## RUN PROCESS ########## {icfi.FilePath} ########## {((isEncrypt == true) ? "암호화" : "복호화")} ########## {cryptoPassword}");
 
                 var wvpmo = new XModel.WebViewPostMessageOrder("LATESTFILE_CRYPTOFILERESULT");
                 wvpmo.SetSupportData(new XModel.DeleteFileIDData(icfi.FileID)); 
@@ -255,7 +255,7 @@ namespace OneFileEncryptDecrypt.UIX
             timerX.Start();
         }
 
-        private void WebViewAction_NewCryptoStartProcess(string filePath, bool isEncrypt)
+        private void WebViewAction_NewCryptoStartProcess(string filePath, bool isEncrypt, string cryptoPassword)
         {
             var timerX = new Timer();
             timerX.Interval = 200;
@@ -271,7 +271,7 @@ namespace OneFileEncryptDecrypt.UIX
                 {
                     // isEncrypt : true >>> Encrypt Work!
                     // isEncrypt : false >>> Decrypt Work!
-                    Debug.WriteLine($"[WebViewAction_NewCryptoStartProcess] ########## RUN PROCESS ########## {filePath} ########## {((isEncrypt == true) ? "암호화" : "복호화")}");
+                    Debug.WriteLine($"[WebViewAction_NewCryptoStartProcess] ########## RUN PROCESS ########## {filePath} ########## {((isEncrypt == true) ? "암호화" : "복호화")} ########## {cryptoPassword}");
 
                     wvpmo.SetSuccess();
                 }

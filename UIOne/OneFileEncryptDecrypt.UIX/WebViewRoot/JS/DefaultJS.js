@@ -15,6 +15,8 @@ const MessageSetX_Hangul = {
     LatestFileItemDeleteQuestion: '해당 항목을 삭제하겠습니까?',
     EncryptFileQuestion: '파일을 암호화 하겠습니까?',
     DecryptFileQuestion: '파일을 복호화 하겠습니까?',
+    PleaseInputEncryptPassword: '암호화 할 비밀번호를 입력해주세요.',
+    PleaseInputDecryptPassword: '복호화 할 비밀번호를 입력해주세요.',
     WF_EMPTY_OR_WRONG_FILEID: 'FileID가 없거나 올바르지 않습니다.',
     WF_NOT_EXIST_FILEITEM: '파일 항목이 없습니다.',
     WF_UNDEFINED_PROCESS: '지정되지 않은 진행입니다.',
@@ -38,6 +40,8 @@ const MessageSetX_English = {
     LatestFileItemDeleteQuestion: 'Are you sure delete this item?',
     EncryptFileQuestion: 'Are you sure encrypt file?',
     DecryptFileQuestion: 'Are you sure decrypt file?',
+    PleaseInputEncryptPassword: 'Please input encrypt password.',
+    PleaseInputDecryptPassword: 'Please input decrypt password.',
     WF_EMPTY_OR_WRONG_FILEID: 'Empty or wrong FileID.',
     WF_NOT_EXIST_FILEITEM: 'Not exist file item.',
     WF_UNDEFINED_PROCESS: 'Undefined process.',
@@ -71,8 +75,14 @@ const NewCryptoX = {
         if (dataX.isSuccess == true) {
             const md = dataX.mainData;
             const confirmMsgX = ((md.isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
-            SimpleDialogX.ConfirmBox(confirmMsgX, async function (isConfirm) {
+            const passwordMsgX = ((md.isEncrypt == true) ? msgSetX.PleaseInputEncryptPassword : msgSetX.PleaseInputDecryptPassword);
+            SimpleDialogX.PasswordBox(confirmMsgX, passwordMsgX, async function (isConfirm, cryptoPassword) {
                 if (isConfirm == true) {
+                    console.log(cryptoPassword);
+                    console.log(cryptoPassword);
+                    console.log(cryptoPassword);
+                    console.log(cryptoPassword);
+                    console.log(cryptoPassword);
                     await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
                 }
                 else {
@@ -154,8 +164,14 @@ const LatestListX = {
         if (itemX != null) {
             const msgSetX = ProcessX.MessageSetX;
             const confirmMsgX = ((isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
-            SimpleDialogX.ConfirmBox(confirmMsgX, async function (isConfirm) {
+            const passwordMsgX = ((isEncrypt == true) ? msgSetX.PleaseInputEncryptPassword : msgSetX.PleaseInputDecryptPassword);
+            SimpleDialogX.PasswordBox(confirmMsgX, passwordMsgX, async function (isConfirm, cryptoPassword) {
                 if (isConfirm == true) {
+                    console.log(cryptoPassword);
+                    console.log(cryptoPassword);
+                    console.log(cryptoPassword);
+                    console.log(cryptoPassword);
+                    console.log(cryptoPassword);
                     DefaultPageBlindX.ShowNow();
                     const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt);
                     if (delResult == 'OK') {
@@ -307,6 +323,50 @@ const SimpleDialogX = {
         cencelBtn.addEventListener('click', function (e) {
             SimpleDialogX.HideNow(tagID);
             actionCallbackFN(false);
+        });
+        SimpleDialogX.ShowNow(tagID);
+    },
+    PasswordBox: function (message, passwordMsg, actionCallbackFN) {
+        const msgSetX = ProcessX.MessageSetX;
+        const bodyX = document.getElementsByTagName('BODY')[0];
+        const tagID = ('passworddialog' + Math.random().toString().replace('.', ''));
+        const htmlX = `
+            <div id="${tagID}blind" class="pageblind"></div>
+            <div id="${tagID}" class="simpledialog passworddialog">
+                <div class="titlebox">${msgSetX.Common_GoProcess}</div>
+                <div class="contentbox">
+                    <div class="messagebox">${message}</div>
+                    <div class="inputbox">
+                        <div class="inputtitle">${passwordMsg}</div>
+                        <div class="inputx"><input type="password" class="cryptopassword" /></div>
+                    </div>                    
+                </div>
+                <div class="actionbox">
+                    <button type="button" class="confirmcolor okbutton">${msgSetX.Common_Confirm}</button>
+                    <button type="button" class="cancelcolor cancelbutton">${msgSetX.Common_Cancel}</button>
+                </div>
+            </div>           
+        `;
+        bodyX.insertAdjacentHTML('beforeend', htmlX);
+        const sdX = document.getElementById(tagID);
+        const okBtn = sdX.querySelector('.actionbox .okbutton');
+        const cencelBtn = sdX.querySelector('.actionbox .cancelbutton');
+        okBtn.addEventListener('click', function (e) {
+            const cryptoPWDSource = sdX.querySelector('.cryptopassword');
+            cryptoPWDSource.classList.remove('invalidsign');
+            cryptoPWDSource.value = cryptoPWDSource.value.trim();
+            if (cryptoPWDSource.value == '') {
+                cryptoPWDSource.classList.add('invalidsign');
+            }
+            else {
+                const cryptoPWD = cryptoPWDSource.value;
+                SimpleDialogX.HideNow(tagID);
+                actionCallbackFN(true, cryptoPWD);
+            }
+        });
+        cencelBtn.addEventListener('click', function (e) {
+            SimpleDialogX.HideNow(tagID);
+            actionCallbackFN(false, '');
         });
         SimpleDialogX.ShowNow(tagID);
     }

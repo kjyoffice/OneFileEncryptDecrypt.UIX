@@ -25,6 +25,8 @@
     --ofed-sd-button-confirm-bordercolor : #5554a7;
     --ofed-sd-button-cancel-bgcolor : #eeeeee;
     --ofed-sd-button-cancel-bordercolor : #999999;
+
+    --ofed-error-bordercolor : #ff0000;
 }
 
 html, 
@@ -37,6 +39,9 @@ input,
 textarea, 
 select,
 button { color:var(--ofed-defaultfontcolor); font-size:16px; font-family:var(--ofed-defaultfontfamily); font-optical-sizing: auto; font-style: normal; line-height: 1.5; }
+
+input::-ms-reveal,
+input::-ms-clear { display: none; }
 
 body { scroll-behavior:smooth; background-color:var(--ofed-mainbgcolor); overflow:hidden; }
 
@@ -69,11 +74,15 @@ a { color:var(--ofed-defaultfontcolor); text-decoration:none; }
 .pageblind { position:fixed; left:0px; top:0px; width:100%; height:100vh; background-color:var(--ofed-pageblindbgcolor); opacity:0.5; z-index:100; display:none; }
 .pageblind.shownow { display:block; }
 
-.simpledialog { position:fixed; left:50%; top:50%; transform: translate(-50%, -50%); background-color:var(--ofed-sd-mainbgcolor); border:1px solid var(--ofed-sd-bordercolor); border-radius: 5px; box-shadow:0px 0px 5px 2px var(--ofed-sd-mainshadowcolor); z-index:150; display:none; }
+.simpledialog { position:fixed; left:50%; top:50%; min-width:30%; transform: translate(-50%, -50%); background-color:var(--ofed-sd-mainbgcolor); border:1px solid var(--ofed-sd-bordercolor); border-radius: 5px; box-shadow:0px 0px 5px 2px var(--ofed-sd-mainshadowcolor); z-index:150; display:none; }
 .simpledialog.shownow { display:block; }
 .simpledialog .titlebox { padding:10px; text-align:center; font-size:1.1rem; font-weight:bold; background-color:var(--ofed-sd-headfootbgcolor); border-bottom:1px solid var(--ofed-sd-bordercolor); border-top-left-radius: 5px; border-top-right-radius: 5px; }
-.simpledialog .contentbox { padding:10px; }
+.simpledialog .contentbox { padding:20px 10px; }
 .simpledialog .contentbox .messagebox { text-align:center; }
+.simpledialog .contentbox .inputbox { margin-top:10px; text-align:center; }
+.simpledialog .contentbox .inputbox .inputtitle { margin-bottom:5px; }
+.simpledialog .contentbox .inputbox input { padding:5px; width:80%; text-align:center; background-color:var(--ofed-sd-mainbgcolor); border:1px solid var(--ofed-sd-bordercolor); border-radius:5px; }
+.simpledialog .contentbox .inputbox input.invalidsign { border:1px solid var(--ofed-error-bordercolor); }
 .simpledialog .actionbox { padding:10px; text-align:center; background-color:var(--ofed-sd-headfootbgcolor); border-top:1px solid var(--ofed-sd-bordercolor); border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; }
 .simpledialog .actionbox button { width:150px; padding:5px;  border-radius:5px; cursor:pointer; }
 .simpledialog .actionbox button.defaultcolor { background-color:var(--ofed-sd-mainbgcolor); border:1px solid var(--ofed-sd-bordercolor); }
@@ -82,6 +91,5 @@ a { color:var(--ofed-defaultfontcolor); text-decoration:none; }
 .simpledialog .actionbox button.cancelcolor { background-color:var(--ofed-sd-button-cancel-bgcolor); border:1px solid var(--ofed-sd-button-cancel-bordercolor); }
 .simpledialog .actionbox .okbutton { font-weight:bold; }
 
-#passworddialog { width:30%; }
-#passworddialog .pwdbox { margin:20px 0px; text-align:center; }
-#passworddialog .pwdbox input { padding:5px; width:80%; text-align:center; background-color:var(--ofed-sd-mainbgcolor); border:1px solid var(--ofed-sd-bordercolor); border-radius:5px; }
+.simpledialog.passworddialog { width:50%; }
+
