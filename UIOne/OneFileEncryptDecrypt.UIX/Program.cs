@@ -73,6 +73,9 @@ namespace OneFileEncryptDecrypt.UIX
 
 // 종료 전까지 비밀번호 기억하기 추가
 // 리스트 새로고침 버튼 추가
-// 아이콘 만들어서 붙이기
-// 트레이에 상주하게 하기
+// OFED 메인 프로그램을 리포에 참조
+// app.config에 경로 안내
+// 리드미 써라
+
+
 
