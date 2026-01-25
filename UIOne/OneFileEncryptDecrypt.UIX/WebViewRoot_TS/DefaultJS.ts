@@ -5,6 +5,7 @@
     isEncrypt:boolean;
 };
 
+type SimpleDialogXConfirmFN = (isConfirm:boolean) => void;
 type EventParameterFNType = (e:Event) => void;
 
 type ProcessXType = {
@@ -20,6 +21,12 @@ type MessageSetXType = {
     Common_Decrypt:string;    
     Common_NotExistItem:string;
     Common_Delete:string;
+    Common_DeleteConfirm:string;
+    Common_Confirm:string;
+    Common_Cancel:string;
+    Common_PleaseCheck:string;
+    Common_GoProcess:string;
+    Common_Complete:string;
     // ------------
     LatestFileItemDeleteQuestion:string;
     EncryptFileQuestion:string;
@@ -61,6 +68,12 @@ const MessageSetX_Hangul:MessageSetXType = {
     Common_Decrypt : '복호화',
     Common_NotExistItem : '항목이 없습니다.',
     Common_Delete : '삭제',
+    Common_DeleteConfirm : '삭제했습니다.',
+    Common_Confirm:'확인',
+    Common_Cancel:'취소',
+    Common_PleaseCheck:'확인해주세요.',
+    Common_GoProcess:'진행하겠습니까?',
+    Common_Complete : '완료했습니다.',
     // ------------
     LatestFileItemDeleteQuestion : '해당 항목을 삭제하겠습니까?',
     EncryptFileQuestion : '파일을 암호화 하겠습니까?',
@@ -82,6 +95,12 @@ const MessageSetX_English:MessageSetXType = {
     Common_Decrypt : 'Decrypt',
     Common_NotExistItem : 'Not exist item',
     Common_Delete : 'Delete',
+    Common_DeleteConfirm : 'Delete done.',
+    Common_Confirm:'OK',
+    Common_Cancel:'Cancel',
+    Common_PleaseCheck:'Please check',
+    Common_GoProcess:'Go process?',
+    Common_Complete : 'Complete.',
     // ------------
     LatestFileItemDeleteQuestion : 'Are you sure delete this item?',
     EncryptFileQuestion : 'Are you sure encrypt file?',
@@ -117,25 +136,30 @@ const NewCryptoX = {
         NewCryptoX.StartNewCrypto(false);
     },
     StartNewCrypto : async function(isEncrypt:boolean) : Promise<void> {
-        PageBlindX.ShowNow();
+        DefaultPageBlindX.ShowNow();
         await WVHandShakeX().NewCryptoNow(isEncrypt);
     },
-    StartNewCrypto_SelectedFile : async function(dataX:ReceiveWebVeiwMessageOrderType) : Promise<void> {
+    StartNewCrypto_SelectedFile : function(dataX:ReceiveWebVeiwMessageOrderType) : void {
         const msgSetX = ProcessX.MessageSetX;
 
         if(dataX.isSuccess == true) {      
             const md = (dataX.mainData as RWMOT_MD_NewCryptoSelectFileType);
             const confirmMsgX = ((md.isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
 
-            if(confirm(confirmMsgX) == true) {
-                // 이제 실제 프로그램 실행시키러 콜
-                await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
-            } else {
-                PageBlindX.HideNow();                
-            }
+            SimpleDialogX.ConfirmBox(
+                confirmMsgX,
+                async function(isConfirm:boolean) : Promise<void> {
+                    if(isConfirm == true) {
+                        // 이제 실제 프로그램 실행시키러 콜
+                        await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
+                    } else {
+                        DefaultPageBlindX.HideNow();                
+                    }
+                }
+            );
         } else {
-            alert(msgSetX[dataX.messageCode]);
-            PageBlindX.HideNow();
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
         }        
     },
     StartNewCrypto_StartProcessResult : function(dataX:ReceiveWebVeiwMessageOrderType) : void {
@@ -149,20 +173,21 @@ const NewCryptoX = {
             //     // 이제 실제 프로그램 실행시키러 콜
             //     await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
             // } else {
-            //     PageBlindX.HideNow();                
+            //     DefaultPageBlindX.HideNow();                
             // }
             console.log('StartNewCrypto_StartProcessResult', dataX);
-            PageBlindX.HideNow();
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox('GOGOGO');
         } else {
-            alert(msgSetX[dataX.messageCode]);
-            PageBlindX.HideNow();
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
         }          
     }
 };
 
 const LatestListX = {
     DisplayList : async function() : Promise<void> {
-        PageBlindX.ShowNow();
+        DefaultPageBlindX.ShowNow();
 
         const areaX = (document.querySelector('#mainframe .latestlistarea ul') as HTMLUListElement);
         const rawFileList = await WVHandShakeX().GetLatestCryptoFileList();
@@ -184,7 +209,7 @@ const LatestListX = {
             LatestListX.CreateNotExist(areaX, msgSetX);
         }
 
-        PageBlindX.HideNow();
+        DefaultPageBlindX.HideNow();
     },
     AllClear : function(areaX : HTMLUListElement) : void {
         const itemList = (areaX.querySelectorAll('li') as NodeListOf<HTMLLIElement>);
@@ -227,27 +252,32 @@ const LatestListX = {
 
         return result;
     },
-    CryptoFileNow : async function(fileID:string, isEncrypt:boolean) : Promise<void> {
+    CryptoFileNow : function(fileID:string, isEncrypt:boolean) : void {
         const itemX = (document.getElementById(('fileitemx_' + fileID)) as HTMLLIElement);
 
         if(itemX != null) {
             const msgSetX = ProcessX.MessageSetX;
             const confirmMsgX = ((isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
 
-            if(confirm(confirmMsgX) == true) {
-                PageBlindX.ShowNow();
+            SimpleDialogX.ConfirmBox(
+                confirmMsgX,
+                async function(isConfirm:boolean) : Promise<void> {
+                    if(isConfirm == true) {
+                        DefaultPageBlindX.ShowNow();
 
-                const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt);
+                        const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt);
 
-                if(delResult == 'OK') {                    
-                    // 뭐가 됐던 일단 프로그램은 실행됐음, 
-                    // 결과는 여기서 기다리기엔 언제 끝날지 모르는 프로그램이라서 블라인드만 유지시켜둠
-                    // 이후 ReceiveWebVeiwMessage를 통해 아래의 OrderID, "CRYPTOFILERESULT" 신호 받을때 까지 대기, 신호 받으면 후처리 함
-                } else {
-                    alert(msgSetX[delResult]);
-                    PageBlindX.HideNow();
-                }
-            }
+                        if(delResult == 'OK') {                    
+                            // 뭐가 됐던 일단 프로그램은 실행됐음, 
+                            // 결과는 여기서 기다리기엔 언제 끝날지 모르는 프로그램이라서 블라인드만 유지시켜둠
+                            // 이후 ReceiveWebVeiwMessage를 통해 아래의 OrderID, "CRYPTOFILERESULT" 신호 받을때 까지 대기, 신호 받으면 후처리 함
+                        } else {
+                            DefaultPageBlindX.HideNow();
+                            SimpleDialogX.AlertBox(msgSetX[delResult]);
+                        }
+                    }
+                }                
+            );
         }
     },
     CryptoFileNow_Result : function(dataX:ReceiveWebVeiwMessageOrderType) : void {
@@ -262,11 +292,13 @@ const LatestListX = {
 
             delItemX.remove();
             areaX.insertAdjacentHTML('afterbegin', htmlX);        
+            
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox(msgSetX.Common_Complete);
         } else {
-            alert(msgSetX[dataX.messageCode]);
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
         }
-
-        PageBlindX.HideNow();    
     },
     EncryptFile : function(fileID:string) : void {
         LatestListX.CryptoFileNow(fileID, true);
@@ -274,28 +306,35 @@ const LatestListX = {
     DecryptFile : function(fileID:string) : void {
         LatestListX.CryptoFileNow(fileID, false);
     },    
-    DeleteItem : async function(fileID:string) : Promise<void> {
+    DeleteItem : function(fileID:string) : void {
         const itemX = (document.getElementById(('fileitemx_' + fileID)) as HTMLLIElement);
 
         if(itemX != null) {
             const msgSetX = ProcessX.MessageSetX;
 
-            if(confirm(msgSetX.LatestFileItemDeleteQuestion) == true) {
-                PageBlindX.ShowNow();
+            SimpleDialogX.ConfirmBox(
+                msgSetX.LatestFileItemDeleteQuestion,
+                async function(isConfirm:boolean) : Promise<void> {
+                    if(isConfirm == true) {
+                        DefaultPageBlindX.ShowNow();
 
-                const delResult = await WVHandShakeX().DeleteLatestCryptoFile(fileID);
+                        const delResult = await WVHandShakeX().DeleteLatestCryptoFile(fileID);
 
-                if(delResult == 'OK') {
-                    // 선택된 리스트 지우고
-                    itemX.remove();
-                    // 리스트가 모두 지워졌을 수 있으니 메세지 뿌리기
-                    LatestListX.DeleteItemAfterNotExist(msgSetX);
-                } else {
-                    alert(msgSetX[delResult]);
-                }
+                        if(delResult == 'OK') {
+                            // 선택된 리스트 지우고
+                            itemX.remove();
+                            // 리스트가 모두 지워졌을 수 있으니 메세지 뿌리기
+                            LatestListX.DeleteItemAfterNotExist(msgSetX);
 
-                PageBlindX.HideNow();
-            }
+                            DefaultPageBlindX.HideNow();
+                            SimpleDialogX.AlertBox(msgSetX.Common_DeleteConfirm);
+                        } else {
+                            DefaultPageBlindX.HideNow();
+                            SimpleDialogX.AlertBox(msgSetX[delResult]);
+                        }
+                    }
+                }                
+            );
         }
     },
     DeleteItemAfterNotExist : function(msgSetX:MessageSetXType) : void {
@@ -308,9 +347,9 @@ const LatestListX = {
     }
 };
 
-const PageBlindX = {
+const DefaultPageBlindX = {
     ShowAndHide : function(isShow:boolean) {
-        const blindX = (document.getElementById('pageblind') as HTMLDivElement);
+        const blindX = (document.getElementById('defaultpageblind') as HTMLDivElement);
 
         if(isShow == true) {
             blindX.classList.add('shownow'); 
@@ -319,11 +358,98 @@ const PageBlindX = {
         }   
     },
     ShowNow : function() {
-        PageBlindX.ShowAndHide(true);
+        DefaultPageBlindX.ShowAndHide(true);
     },
     HideNow : function() {
-        PageBlindX.ShowAndHide(false);
+        DefaultPageBlindX.ShowAndHide(false);
     }    
+};
+
+const SimpleDialogX = {
+    ShowAndHide : function(tagID:string, isShow:boolean) {
+        const sdX = (document.getElementById(tagID) as HTMLDivElement);
+        const blindX = (document.getElementById((tagID + 'blind')) as HTMLDivElement);
+
+        if(isShow == true) {
+            blindX.classList.add('shownow'); 
+            sdX.classList.add('shownow'); 
+        } else {
+            sdX.classList.remove('shownow'); 
+            blindX.classList.remove('shownow'); 
+            // 닫을때 삭제
+            sdX.remove();
+            blindX.remove();
+        }   
+    },
+    ShowNow : function(tagID:string) {
+        SimpleDialogX.ShowAndHide(tagID, true);
+    },
+    HideNow : function(tagID:string) {
+        SimpleDialogX.ShowAndHide(tagID, false);
+    },
+    AlertBox : function(message:string|undefined) : void {
+        const msgSetX = ProcessX.MessageSetX;
+        const bodyX = (document.getElementsByTagName('BODY')[0] as HTMLBodyElement);
+        const tagID = ('alertdialog' + Math.random().toString().replace('.', ''));
+        const htmlX = `
+            <div id="${tagID}blind" class="pageblind"></div>
+            <div id="${tagID}" class="simpledialog">
+                <div class="titlebox">${msgSetX.Common_PleaseCheck}</div>
+                <div class="contentbox">
+                    <div class="messagebox">${message}</div>
+                </div>
+                <div class="actionbox">
+                    <button type="button" class="confirmcolor okbutton" onclick="SimpleDialogX.HideNow('${tagID}');">${msgSetX.Common_Confirm}</button>
+                </div>
+            </div>        
+        `;
+
+        bodyX.insertAdjacentHTML('beforeend', htmlX);
+
+        SimpleDialogX.ShowNow(tagID);
+    },
+    ConfirmBox : function(message:string|undefined, actionCallbackFN:SimpleDialogXConfirmFN) : void {
+        const msgSetX = ProcessX.MessageSetX;
+        const bodyX = (document.getElementsByTagName('BODY')[0] as HTMLBodyElement);
+        const tagID = ('confirmdialog' + Math.random().toString().replace('.', ''));
+        const htmlX = `
+            <div id="${tagID}blind" class="pageblind"></div>
+            <div id="${tagID}" class="simpledialog">
+                <div class="titlebox">${msgSetX.Common_GoProcess}</div>
+                <div class="contentbox">
+                    <div class="messagebox">${message}</div>
+                </div>
+                <div class="actionbox">
+                    <button type="button" class="confirmcolor okbutton">${msgSetX.Common_Confirm}</button>
+                    <button type="button" class="cancelcolor cancelbutton">${msgSetX.Common_Cancel}</button>
+                </div>
+            </div>           
+        `;
+
+        bodyX.insertAdjacentHTML('beforeend', htmlX);
+
+        const sdX = (document.getElementById(tagID) as HTMLDivElement);
+        const okBtn = (sdX.querySelector('.actionbox .okbutton') as HTMLButtonElement);
+        const cencelBtn = (sdX.querySelector('.actionbox .cancelbutton') as HTMLButtonElement);
+
+        okBtn.addEventListener(
+            'click', 
+            function(e:Event) : void {
+                SimpleDialogX.HideNow(tagID);
+                actionCallbackFN(true);
+            }
+        );
+
+        cencelBtn.addEventListener(
+            'click', 
+            function(e:Event) : void {
+                SimpleDialogX.HideNow(tagID);
+                actionCallbackFN(false);
+            }
+        );        
+
+        SimpleDialogX.ShowNow(tagID);
+    }
 };
 
 const LanguageX = {
@@ -372,7 +498,7 @@ const PageLoadingX = {
         LanguageX.SetPageLanguage();
         PageLoadingX.NewCryptoAction('encrypt', NewCryptoX.EncryptFile);
         PageLoadingX.NewCryptoAction('decrypt', NewCryptoX.DecryptFile);
-        //LatestListX.DisplayList();
+        LatestListX.DisplayList();
     },
     NewCryptoAction : function(cryptoType:string, clickAction:EventParameterFNType) {
         const btnX = (document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button')) as HTMLButtonElement);
@@ -387,7 +513,7 @@ const ReceiveWebVeiwMessage = function(e:MessageEvent<any>) : void {
     if(dataX.orderID == 'LATESTFILE_CRYPTOFILERESULT') {
         LatestListX.CryptoFileNow_Result(dataX);
     } else if(dataX.orderID == 'HIDEPAGEBLIND') {
-        PageBlindX.HideNow();
+        DefaultPageBlindX.HideNow();
     } else if(dataX.orderID == 'NEWCRYPTO_SELECTEDFILE') {
         NewCryptoX.StartNewCrypto_SelectedFile(dataX);
     } else if(dataX.orderID == 'NEWCRYPTO_STARTPROCESSRESULT') {

@@ -6,6 +6,12 @@ const MessageSetX_Hangul = {
     Common_Decrypt: '복호화',
     Common_NotExistItem: '항목이 없습니다.',
     Common_Delete: '삭제',
+    Common_DeleteConfirm: '삭제했습니다.',
+    Common_Confirm: '확인',
+    Common_Cancel: '취소',
+    Common_PleaseCheck: '확인해주세요.',
+    Common_GoProcess: '진행하겠습니까?',
+    Common_Complete: '완료했습니다.',
     LatestFileItemDeleteQuestion: '해당 항목을 삭제하겠습니까?',
     EncryptFileQuestion: '파일을 암호화 하겠습니까?',
     DecryptFileQuestion: '파일을 복호화 하겠습니까?',
@@ -23,6 +29,12 @@ const MessageSetX_English = {
     Common_Decrypt: 'Decrypt',
     Common_NotExistItem: 'Not exist item',
     Common_Delete: 'Delete',
+    Common_DeleteConfirm: 'Delete done.',
+    Common_Confirm: 'OK',
+    Common_Cancel: 'Cancel',
+    Common_PleaseCheck: 'Please check',
+    Common_GoProcess: 'Go process?',
+    Common_Complete: 'Complete.',
     LatestFileItemDeleteQuestion: 'Are you sure delete this item?',
     EncryptFileQuestion: 'Are you sure encrypt file?',
     DecryptFileQuestion: 'Are you sure decrypt file?',
@@ -51,41 +63,44 @@ const NewCryptoX = {
         NewCryptoX.StartNewCrypto(false);
     },
     StartNewCrypto: async function (isEncrypt) {
-        PageBlindX.ShowNow();
+        DefaultPageBlindX.ShowNow();
         await WVHandShakeX().NewCryptoNow(isEncrypt);
     },
-    StartNewCrypto_SelectedFile: async function (dataX) {
+    StartNewCrypto_SelectedFile: function (dataX) {
         const msgSetX = ProcessX.MessageSetX;
         if (dataX.isSuccess == true) {
             const md = dataX.mainData;
             const confirmMsgX = ((md.isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
-            if (confirm(confirmMsgX) == true) {
-                await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
-            }
-            else {
-                PageBlindX.HideNow();
-            }
+            SimpleDialogX.ConfirmBox(confirmMsgX, async function (isConfirm) {
+                if (isConfirm == true) {
+                    await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
+                }
+                else {
+                    DefaultPageBlindX.HideNow();
+                }
+            });
         }
         else {
-            alert(msgSetX[dataX.messageCode]);
-            PageBlindX.HideNow();
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
         }
     },
     StartNewCrypto_StartProcessResult: function (dataX) {
         const msgSetX = ProcessX.MessageSetX;
         if (dataX.isSuccess == true) {
             console.log('StartNewCrypto_StartProcessResult', dataX);
-            PageBlindX.HideNow();
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox('GOGOGO');
         }
         else {
-            alert(msgSetX[dataX.messageCode]);
-            PageBlindX.HideNow();
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
         }
     }
 };
 const LatestListX = {
     DisplayList: async function () {
-        PageBlindX.ShowNow();
+        DefaultPageBlindX.ShowNow();
         const areaX = document.querySelector('#mainframe .latestlistarea ul');
         const rawFileList = await WVHandShakeX().GetLatestCryptoFileList();
         const fileList = JSON.parse(rawFileList);
@@ -100,7 +115,7 @@ const LatestListX = {
         else {
             LatestListX.CreateNotExist(areaX, msgSetX);
         }
-        PageBlindX.HideNow();
+        DefaultPageBlindX.HideNow();
     },
     AllClear: function (areaX) {
         const itemList = areaX.querySelectorAll('li');
@@ -134,21 +149,23 @@ const LatestListX = {
         `;
         return result;
     },
-    CryptoFileNow: async function (fileID, isEncrypt) {
+    CryptoFileNow: function (fileID, isEncrypt) {
         const itemX = document.getElementById(('fileitemx_' + fileID));
         if (itemX != null) {
             const msgSetX = ProcessX.MessageSetX;
             const confirmMsgX = ((isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
-            if (confirm(confirmMsgX) == true) {
-                PageBlindX.ShowNow();
-                const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt);
-                if (delResult == 'OK') {
+            SimpleDialogX.ConfirmBox(confirmMsgX, async function (isConfirm) {
+                if (isConfirm == true) {
+                    DefaultPageBlindX.ShowNow();
+                    const delResult = await WVHandShakeX().CryptoLatestFile(fileID, isEncrypt);
+                    if (delResult == 'OK') {
+                    }
+                    else {
+                        DefaultPageBlindX.HideNow();
+                        SimpleDialogX.AlertBox(msgSetX[delResult]);
+                    }
                 }
-                else {
-                    alert(msgSetX[delResult]);
-                    PageBlindX.HideNow();
-                }
-            }
+            });
         }
     },
     CryptoFileNow_Result: function (dataX) {
@@ -161,11 +178,13 @@ const LatestListX = {
             const htmlX = LatestListX.CreateFileItem(fileItem, msgSetX);
             delItemX.remove();
             areaX.insertAdjacentHTML('afterbegin', htmlX);
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox(msgSetX.Common_Complete);
         }
         else {
-            alert(msgSetX[dataX.messageCode]);
+            DefaultPageBlindX.HideNow();
+            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
         }
-        PageBlindX.HideNow();
     },
     EncryptFile: function (fileID) {
         LatestListX.CryptoFileNow(fileID, true);
@@ -173,22 +192,26 @@ const LatestListX = {
     DecryptFile: function (fileID) {
         LatestListX.CryptoFileNow(fileID, false);
     },
-    DeleteItem: async function (fileID) {
+    DeleteItem: function (fileID) {
         const itemX = document.getElementById(('fileitemx_' + fileID));
         if (itemX != null) {
             const msgSetX = ProcessX.MessageSetX;
-            if (confirm(msgSetX.LatestFileItemDeleteQuestion) == true) {
-                PageBlindX.ShowNow();
-                const delResult = await WVHandShakeX().DeleteLatestCryptoFile(fileID);
-                if (delResult == 'OK') {
-                    itemX.remove();
-                    LatestListX.DeleteItemAfterNotExist(msgSetX);
+            SimpleDialogX.ConfirmBox(msgSetX.LatestFileItemDeleteQuestion, async function (isConfirm) {
+                if (isConfirm == true) {
+                    DefaultPageBlindX.ShowNow();
+                    const delResult = await WVHandShakeX().DeleteLatestCryptoFile(fileID);
+                    if (delResult == 'OK') {
+                        itemX.remove();
+                        LatestListX.DeleteItemAfterNotExist(msgSetX);
+                        DefaultPageBlindX.HideNow();
+                        SimpleDialogX.AlertBox(msgSetX.Common_DeleteConfirm);
+                    }
+                    else {
+                        DefaultPageBlindX.HideNow();
+                        SimpleDialogX.AlertBox(msgSetX[delResult]);
+                    }
                 }
-                else {
-                    alert(msgSetX[delResult]);
-                }
-                PageBlindX.HideNow();
-            }
+            });
         }
     },
     DeleteItemAfterNotExist: function (msgSetX) {
@@ -199,9 +222,9 @@ const LatestListX = {
         }
     }
 };
-const PageBlindX = {
+const DefaultPageBlindX = {
     ShowAndHide: function (isShow) {
-        const blindX = document.getElementById('pageblind');
+        const blindX = document.getElementById('defaultpageblind');
         if (isShow == true) {
             blindX.classList.add('shownow');
         }
@@ -210,10 +233,82 @@ const PageBlindX = {
         }
     },
     ShowNow: function () {
-        PageBlindX.ShowAndHide(true);
+        DefaultPageBlindX.ShowAndHide(true);
     },
     HideNow: function () {
-        PageBlindX.ShowAndHide(false);
+        DefaultPageBlindX.ShowAndHide(false);
+    }
+};
+const SimpleDialogX = {
+    ShowAndHide: function (tagID, isShow) {
+        const sdX = document.getElementById(tagID);
+        const blindX = document.getElementById((tagID + 'blind'));
+        if (isShow == true) {
+            blindX.classList.add('shownow');
+            sdX.classList.add('shownow');
+        }
+        else {
+            sdX.classList.remove('shownow');
+            blindX.classList.remove('shownow');
+            sdX.remove();
+            blindX.remove();
+        }
+    },
+    ShowNow: function (tagID) {
+        SimpleDialogX.ShowAndHide(tagID, true);
+    },
+    HideNow: function (tagID) {
+        SimpleDialogX.ShowAndHide(tagID, false);
+    },
+    AlertBox: function (message) {
+        const msgSetX = ProcessX.MessageSetX;
+        const bodyX = document.getElementsByTagName('BODY')[0];
+        const tagID = ('alertdialog' + Math.random().toString().replace('.', ''));
+        const htmlX = `
+            <div id="${tagID}blind" class="pageblind"></div>
+            <div id="${tagID}" class="simpledialog">
+                <div class="titlebox">${msgSetX.Common_PleaseCheck}</div>
+                <div class="contentbox">
+                    <div class="messagebox">${message}</div>
+                </div>
+                <div class="actionbox">
+                    <button type="button" class="confirmcolor okbutton" onclick="SimpleDialogX.HideNow('${tagID}');">${msgSetX.Common_Confirm}</button>
+                </div>
+            </div>        
+        `;
+        bodyX.insertAdjacentHTML('beforeend', htmlX);
+        SimpleDialogX.ShowNow(tagID);
+    },
+    ConfirmBox: function (message, actionCallbackFN) {
+        const msgSetX = ProcessX.MessageSetX;
+        const bodyX = document.getElementsByTagName('BODY')[0];
+        const tagID = ('confirmdialog' + Math.random().toString().replace('.', ''));
+        const htmlX = `
+            <div id="${tagID}blind" class="pageblind"></div>
+            <div id="${tagID}" class="simpledialog">
+                <div class="titlebox">${msgSetX.Common_GoProcess}</div>
+                <div class="contentbox">
+                    <div class="messagebox">${message}</div>
+                </div>
+                <div class="actionbox">
+                    <button type="button" class="confirmcolor okbutton">${msgSetX.Common_Confirm}</button>
+                    <button type="button" class="cancelcolor cancelbutton">${msgSetX.Common_Cancel}</button>
+                </div>
+            </div>           
+        `;
+        bodyX.insertAdjacentHTML('beforeend', htmlX);
+        const sdX = document.getElementById(tagID);
+        const okBtn = sdX.querySelector('.actionbox .okbutton');
+        const cencelBtn = sdX.querySelector('.actionbox .cancelbutton');
+        okBtn.addEventListener('click', function (e) {
+            SimpleDialogX.HideNow(tagID);
+            actionCallbackFN(true);
+        });
+        cencelBtn.addEventListener('click', function (e) {
+            SimpleDialogX.HideNow(tagID);
+            actionCallbackFN(false);
+        });
+        SimpleDialogX.ShowNow(tagID);
     }
 };
 const LanguageX = {
@@ -253,6 +348,7 @@ const PageLoadingX = {
         LanguageX.SetPageLanguage();
         PageLoadingX.NewCryptoAction('encrypt', NewCryptoX.EncryptFile);
         PageLoadingX.NewCryptoAction('decrypt', NewCryptoX.DecryptFile);
+        LatestListX.DisplayList();
     },
     NewCryptoAction: function (cryptoType, clickAction) {
         const btnX = document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button'));
@@ -265,7 +361,7 @@ const ReceiveWebVeiwMessage = function (e) {
         LatestListX.CryptoFileNow_Result(dataX);
     }
     else if (dataX.orderID == 'HIDEPAGEBLIND') {
-        PageBlindX.HideNow();
+        DefaultPageBlindX.HideNow();
     }
     else if (dataX.orderID == 'NEWCRYPTO_SELECTEDFILE') {
         NewCryptoX.StartNewCrypto_SelectedFile(dataX);
