@@ -9,9 +9,6 @@ namespace OneFileEncryptDecrypt.UIX.XModel
 {
     public class LatestCryptoFileItem
     {
-        [Newtonsoft.Json.JsonIgnore]
-        public bool IsAllow { get; private set; }
-
         [Newtonsoft.Json.JsonProperty("fileID")]
         public string FileID { get; private set; }
 
@@ -29,12 +26,27 @@ namespace OneFileEncryptDecrypt.UIX.XModel
 
         // ---------------------------------------------------------
 
+        [Newtonsoft.Json.JsonIgnore]
+        public bool IsAllow
+        {
+            get
+            {
+                return this.IsAllowCheck(this.FileID, this.FilePath);
+            }
+        }
+
+        // ---------------------------------------------------------
+
+        private bool IsAllowCheck(string fileID, string filePath)
+        {
+            return ((fileID != string.Empty) && ((filePath != null) && (File.Exists(filePath) == true)));
+        }
+
         private void MainCTOR(string fileID, string filePath)
         {
-            var isAllow = ((fileID != string.Empty) && ((filePath != null) && (File.Exists(filePath) == true)));
+            var isAllow = this.IsAllowCheck(fileID, filePath);
             var encryptedFileExt = XValue.ProcessValue.WorkFileExtension_DoneX.ToUpper();
 
-            this.IsAllow = isAllow;
             this.FileID = fileID;
             this.FilePath = ((isAllow == true) ? filePath : string.Empty);
             this.FileName = ((isAllow == true) ? Path.GetFileName(filePath) : string.Empty);
@@ -59,14 +71,20 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             this.MainCTOR(fileID, filePath);
         }
 
-        public bool IsMatchAllowFileID(string fileID)
+        public bool IsMatchAllowFileID(string fileIDSource)
         {
-            return ((this.IsAllow == true) && (this.FileID == fileID));
+            var fileID = this.FileID;
+            var filePath = this.FilePath;
+            var isAllow = this.IsAllowCheck(fileID, filePath);
+            var result = ((isAllow == true) && (fileID == fileIDSource));
+
+            return result;
         }
 
-        public void ChangeNowAllow()
+        public void ChangeNotAllow()
         {
-            this.IsAllow = false;
+            // 리스트에서 빼는거는 FileID를 빈값으로 한다
+            this.FileID = string.Empty;
         }
     }
 }

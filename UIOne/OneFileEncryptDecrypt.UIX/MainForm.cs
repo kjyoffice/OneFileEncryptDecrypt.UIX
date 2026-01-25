@@ -129,7 +129,7 @@ namespace OneFileEncryptDecrypt.UIX
 
                 if (icfi != null)
                 {
-                    icfi.ChangeNowAllow();
+                    icfi.ChangeNotAllow();
                     result = "OK";
                 }
                 else
@@ -172,7 +172,7 @@ namespace OneFileEncryptDecrypt.UIX
                         if (File.Exists(icfi.FilePath) == true)
                         {
                             // 여기까지 온거면 작업에서 성공이던 실패던 관계없이 일단 리스트에서는 뺀다
-                            icfi.ChangeNowAllow();
+                            icfi.ChangeNotAllow();
 
                             this.WebViewAction_CryptoLatestFile_RunProcess(icfi, isEncrypt, cryptoPassword);
 
@@ -371,15 +371,24 @@ namespace OneFileEncryptDecrypt.UIX
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            var psx = this.PSX;
+            var caption = this.Text;
+            var closeQuestion = ((psx.IsHangul == true) ? "프로그램을 종료하겠습니까?" : "Do you want to exit the program?");
 
+            if (MessageBox.Show(closeQuestion, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            {
+                e.Cancel = true;
+            }
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             var psx = this.PSX;
-            var lcfiList = this.LCFIList.Where(x => (x.IsAllow == true)).ToList();
+            var rlcfiList = this.LCFIList.Where(x => (x.IsAllow == true)).Select(x => new XModel.RawLatestCryptoFileItem(x)).ToList();
+            var jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(rlcfiList);
 
-            Debug.WriteLine("최근 파일 리스트 저장해라");
+            // 현재 리스트의 파일정보 기록
+            File.WriteAllText(psx.LatestCryptoFilePath, jsonText, Encoding.UTF8);
         }
 
         private void MainWebBrowser_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)

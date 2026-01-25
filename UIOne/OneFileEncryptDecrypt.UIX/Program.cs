@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
+using System.IO;
 
 namespace OneFileEncryptDecrypt.UIX
 {
@@ -36,28 +37,44 @@ namespace OneFileEncryptDecrypt.UIX
             var asmName = Assembly.GetExecutingAssembly().GetName().Name;
 
             var isDebugMode = Program.IsDebugMode;
+            var ofedAppPath = XAppConfig.AppSettings.OFEDAppPath;
             var buildType = ((isDebugMode == true) ? "DEBUG" : "RELEASE");
             var mutexName = (asmName + "_" + buildType);
             var psx = new XModel.ProcessSupportX(isDebugMode);
 
-            using (var mt = new Mutex(false, mutexName))
+            if ((ofedAppPath != string.Empty) && (File.Exists(ofedAppPath) == true))
             {
-                if (mt.WaitOne(0, false) == true)
+                using (var mt = new Mutex(false, mutexName))
                 {
+                    if (mt.WaitOne(0, false) == true)
+                    {
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                        Application.Run(new MainForm(psx));
+                    }
+                    else
+                    {
+                        var msgX = ((psx.IsHangul == true) ? "프로그램이 이미 실행중입니다." : "Program is already running.");
 
-                    //  XAppConfig.AppSettings.OFEDAppPath 존재하는지 체크해라
+                        MessageBox.Show(msgX, asmName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
 
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new MainForm(psx));
+                    mt.Close();
                 }
-                else
-                {
-                    MessageBox.Show("프로그램이 이미 실행중입니다.", asmName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+            }
+            else
+            {
+                var msgX = ((psx.IsHangul == true) ? "OFED 프로그램이 없습니다." : "Not exist OFED application.");
 
-                mt.Close();
+                MessageBox.Show(msgX, asmName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
     }
 }
+
+
+// 종료 전까지 비밀번호 기억하기 추가
+// 리스트 새로고침 버튼 추가
+// 아이콘 만들어서 붙이기
+// 트레이에 상주하게 하기
+

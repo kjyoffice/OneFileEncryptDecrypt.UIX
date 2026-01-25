@@ -61,6 +61,7 @@
     <Compile Include="XModel\FilePathCryptoModeData.cs" />
     <Compile Include="XModel\LatestCryptoFileItem.cs" />
     <Compile Include="XModel\ProcessSupportX.cs" />
+    <Compile Include="XModel\RawLatestCryptoFileItem.cs" />
     <Compile Include="XModel\WebViewJSHandShake.cs" />
     <Compile Include="XModel\WebViewPostMessageOrder.cs" />
     <Compile Include="XModel_Json\LatestCryptoFileItem_Json.cs" />
