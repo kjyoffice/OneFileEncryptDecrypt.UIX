@@ -44,6 +44,9 @@ namespace OneFileEncryptDecrypt.UIX
             {
                 if (mt.WaitOne(0, false) == true)
                 {
+
+                    //  XAppConfig.AppSettings.OFEDAppPath 존재하는지 체크해라
+
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
                     Application.Run(new MainForm(psx));

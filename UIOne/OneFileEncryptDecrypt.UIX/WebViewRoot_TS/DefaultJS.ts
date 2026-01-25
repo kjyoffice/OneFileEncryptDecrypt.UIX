@@ -41,6 +41,7 @@ type MessageSetXType = {
     WF_NOT_EXIST_FILE:string;
     WF_WRONG_ENCRYPT_FILE:string;
     WF_WRONG_DECRYPT_FILE:string;
+    WF_OFED_AFTER_EXECUTE_WRONG:string;
 }
 & {
     [key: string]: string | undefined;
@@ -90,6 +91,7 @@ const MessageSetX_Hangul:MessageSetXType = {
     WF_NOT_EXIST_FILE : '파일이 존재하지 않습니다.',
     WF_WRONG_ENCRYPT_FILE : '암호화 할 파일이 올바르지 않습니다.',
     WF_WRONG_DECRYPT_FILE : '복호화 할 파일이 올바르지 않습니다.',
+    WF_OFED_AFTER_EXECUTE_WRONG : '프로그램 실행 결과가 올바르지 않습니다.'
 };
 
 const MessageSetX_English:MessageSetXType = {
@@ -118,7 +120,8 @@ const MessageSetX_English:MessageSetXType = {
     WF_UNDEFINED_PROCESS : 'Undefined process.',
     WF_NOT_EXIST_FILE : 'Not exist file.',
     WF_WRONG_ENCRYPT_FILE : 'Wrong encrypt file.',
-    WF_WRONG_DECRYPT_FILE : 'Erong decrypt file',    
+    WF_WRONG_DECRYPT_FILE : 'Erong decrypt file',
+    WF_OFED_AFTER_EXECUTE_WRONG : 'Wrong OFED execute result.'
 };
 
 const ProcessX:ProcessXType = {
@@ -173,24 +176,11 @@ const NewCryptoX = {
     },
     StartNewCrypto_StartProcessResult : function(dataX:ReceiveWebVeiwMessageOrderType) : void {
         const msgSetX = ProcessX.MessageSetX;
+        const msgX = ((dataX.isSuccess == true) ? msgSetX.Common_Complete : msgSetX[dataX.messageCode]);
 
-        if(dataX.isSuccess == true) {      
-            // const md = (dataX.mainData as RWMOT_MD_NewCryptoSelectFileType);
-            // const confirmMsgX = ((md.isEncrypt == true) ? msgSetX.EncryptFileQuestion : msgSetX.DecryptFileQuestion);
-
-            // if(confirm(confirmMsgX) == true) {
-            //     // 이제 실제 프로그램 실행시키러 콜
-            //     await WVHandShakeX().NewCryptoStartProcess(md.filePath, md.isEncrypt);
-            // } else {
-            //     DefaultPageBlindX.HideNow();                
-            // }
-            console.log('StartNewCrypto_StartProcessResult', dataX);
-            DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox('GOGOGO');
-        } else {
-            DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
-        }          
+        DefaultPageBlindX.HideNow();
+        LatestListX.DisplayList();
+        SimpleDialogX.AlertBox(msgX);
     }
 };
 
@@ -293,23 +283,11 @@ const LatestListX = {
     },
     CryptoFileNow_Result : function(dataX:ReceiveWebVeiwMessageOrderType) : void {
         const msgSetX = ProcessX.MessageSetX;
+        const msgX = ((dataX.isSuccess == true) ? msgSetX.Common_Complete : msgSetX[dataX.messageCode]);
 
-        if(dataX.isSuccess == true) {
-            const sd = (dataX.supportData as RWMOT_SD_LatestDeleteFileIDType);
-            const fileItem = (dataX.mainData as LatestFileListType);
-            const delItemX = (document.getElementById(('fileitemx_' + sd.deleteFileID)) as HTMLLIElement);
-            const areaX = (document.querySelector('#mainframe .latestlistarea ul') as HTMLUListElement);
-            const htmlX = LatestListX.CreateFileItem(fileItem, msgSetX);
-
-            delItemX.remove();
-            areaX.insertAdjacentHTML('afterbegin', htmlX);        
-            
-            DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox(msgSetX.Common_Complete);
-        } else {
-            DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
-        }
+        DefaultPageBlindX.HideNow();
+        LatestListX.DisplayList();        
+        SimpleDialogX.AlertBox(msgX);
     },
     EncryptFile : function(fileID:string) : void {
         LatestListX.CryptoFileNow(fileID, true);
@@ -336,13 +314,12 @@ const LatestListX = {
                             itemX.remove();
                             // 리스트가 모두 지워졌을 수 있으니 메세지 뿌리기
                             LatestListX.DeleteItemAfterNotExist(msgSetX);
-
-                            DefaultPageBlindX.HideNow();
-                            SimpleDialogX.AlertBox(msgSetX.Common_DeleteConfirm);
-                        } else {
-                            DefaultPageBlindX.HideNow();
-                            SimpleDialogX.AlertBox(msgSetX[delResult]);
                         }
+
+                        const msgX = ((delResult == 'OK') ? msgSetX.Common_DeleteConfirm : msgSetX[delResult]);
+
+                        DefaultPageBlindX.HideNow();
+                        SimpleDialogX.AlertBox(msgX);
                     }
                 }                
             );
@@ -577,6 +554,8 @@ const PageLoadingX = {
 
 const ReceiveWebVeiwMessage = function(e:MessageEvent<any>) : void {
     const dataX = (e.data as ReceiveWebVeiwMessageOrderType);
+
+    console.log('[ReceiveWebVeiwMessage] ', dataX);
 
     if(dataX.orderID == 'LATESTFILE_CRYPTOFILERESULT') {
         LatestListX.CryptoFileNow_Result(dataX);

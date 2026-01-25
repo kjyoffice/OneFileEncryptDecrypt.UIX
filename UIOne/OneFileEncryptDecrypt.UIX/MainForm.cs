@@ -88,6 +88,27 @@ namespace OneFileEncryptDecrypt.UIX
             return result;
         }
 
+        private void OFEDExecute(string appArgs)
+        {
+            using (var p = new Process())
+            {
+                p.StartInfo.FileName = XAppConfig.AppSettings.OFEDAppPath;
+                p.StartInfo.Arguments = appArgs;
+                p.Start();
+                p.WaitForExit();
+            }
+        }
+
+        private string OFEDExecute_EncryptArguments(string cryptoPassword, string filePath)
+        {
+            return $"encrypt --password {cryptoPassword} --file {filePath} --isuix true";
+        }
+
+        private string OFEDExecute_DecryptArguments(string cryptoPassword, string filePath)
+        {
+            return $"decrypt --password {cryptoPassword} --file {filePath} --isuix true";
+        }
+
         // -------------------------------------------------
 
         private string WebViewAction_GetLatestCryptoFileList()
@@ -189,14 +210,28 @@ namespace OneFileEncryptDecrypt.UIX
                 timerX.Stop();
                 timerX.Dispose();
 
-                // isEncrypt : true >>> Encrypt Work!
-                // isEncrypt : false >>> Decrypt Work!
-                Debug.WriteLine($"[WebViewAction_CryptoLatestFile_RunProcess] ########## RUN PROCESS ########## {icfi.FilePath} ########## {((isEncrypt == true) ? "암호화" : "복호화")} ########## {cryptoPassword}");
+                var appExeArgs = (
+                    (isEncrypt == true) ? 
+                    this.OFEDExecute_EncryptArguments(cryptoPassword, icfi.FilePath) : 
+                    this.OFEDExecute_DecryptArguments(cryptoPassword, icfi.FilePath)
+                );
+                
+                this.OFEDExecute(appExeArgs);
 
+                var newLCFI = this.NewLCFI(icfi.FilePath, isEncrypt);
                 var wvpmo = new XModel.WebViewPostMessageOrder("LATESTFILE_CRYPTOFILERESULT");
-                wvpmo.SetSupportData(new XModel.DeleteFileIDData(icfi.FileID)); 
-                wvpmo.SetMainData(this.NewLCFI(icfi.FilePath, isEncrypt));
-                wvpmo.SetSuccess();
+                wvpmo.SetSupportData(new XModel.DeleteFileIDData(icfi.FileID));
+                wvpmo.SetMainData(newLCFI);
+
+                // 프로그램이 종료되면 파일 존재여부만 보고 성공여부 판단하자
+                if (newLCFI.IsAllow == true)
+                {
+                    wvpmo.SetSuccess();
+                }
+                else
+                {
+                    wvpmo.SetMessageCode("WF_OFED_AFTER_EXECUTE_WRONG");
+                }
 
                 this.WebViewPostWebMessage(wvpmo);
             };
@@ -269,11 +304,26 @@ namespace OneFileEncryptDecrypt.UIX
 
                 if (fpcmd.IsAllow == true)
                 {
-                    // isEncrypt : true >>> Encrypt Work!
-                    // isEncrypt : false >>> Decrypt Work!
-                    Debug.WriteLine($"[WebViewAction_NewCryptoStartProcess] ########## RUN PROCESS ########## {filePath} ########## {((isEncrypt == true) ? "암호화" : "복호화")} ########## {cryptoPassword}");
+                    var appExeArgs = (
+                        (isEncrypt == true) ?
+                        this.OFEDExecute_EncryptArguments(cryptoPassword, filePath) :
+                        this.OFEDExecute_DecryptArguments(cryptoPassword, filePath)
+                    );
 
-                    wvpmo.SetSuccess();
+                    this.OFEDExecute(appExeArgs);
+
+                    var newLCFI = this.NewLCFI(filePath, isEncrypt);
+
+                    // 프로그램이 종료되면 파일 존재여부만 보고 성공여부 판단하자
+                    if (newLCFI.IsAllow == true)
+                    {
+                        wvpmo.SetMainData(newLCFI);
+                        wvpmo.SetSuccess();
+                    }
+                    else
+                    {
+                        wvpmo.SetMessageCode("WF_OFED_AFTER_EXECUTE_WRONG");
+                    }
                 }
                 else
                 {
@@ -388,11 +438,43 @@ namespace OneFileEncryptDecrypt.UIX
 
         private void TestXAction_Click(object sender, EventArgs e)
         {
-            Debug.WriteLine(XAppConfig.AppSettings.OFEDAppPath);
-
             //Process.Start(XAppConfig.AppSettings.OFEDAppPath, "OneFileEncryptDecrypt encrypt -p 0123456789 -f d:\\Download\\Dummy\\XYZ.JPG");
             //Process.Start(XAppConfig.AppSettings.OFEDAppPath, "OneFileEncryptDecrypt decrypt -p 0123456789 -f d:\\Download\\Dummy\\XYZ.JPG.ofedx");
 
+            /*
+            using (var p = new Process())
+            {
+                p.StartInfo.FileName = "E:\\ApplicationProject - My\\OneFileEncryptDecrypt\\OneFileEncryptDecrypt\\bin\\Debug\\net10.0\\OneFileEncryptDecrypt.exe";
+                p.StartInfo.Arguments = "encrypt -p 0123456789 -f d:\\Download\\Dummy\\XYZ.JPG";
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.RedirectStandardError = true;
+                p.OutputDataReceived += (object senderX, DataReceivedEventArgs eX) =>
+                {
+                    Console.Out.WriteLine(("[Data] " + eX.Data));
+                };
+                p.ErrorDataReceived += (object senderX, DataReceivedEventArgs eX) =>
+                {
+                    Console.Out.WriteLine(("[Error] " + eX.Data));
+                };
+                p.Start();
+                p.BeginOutputReadLine();
+                p.BeginErrorReadLine();
+                p.WaitForExit();
+            }
+            */
+            /*
+            using (var p = new Process())
+            {
+                p.StartInfo.FileName = "E:\\ApplicationProject - My\\OneFileEncryptDecrypt\\OneFileEncryptDecrypt\\bin\\Debug\\net10.0\\OneFileEncryptDecrypt.exe";
+                //p.StartInfo.Arguments = "encrypt -p 0123456789 -f d:\\Download\\Dummy\\XYZ.JPG";
+                p.StartInfo.Arguments = "decrypt -p 0123456789 -f d:\\Download\\Dummy\\XYZ.JPG.ofedx";
+                p.Start();
+                p.WaitForExit();
+            }
+            */
 
             // Empty
         }

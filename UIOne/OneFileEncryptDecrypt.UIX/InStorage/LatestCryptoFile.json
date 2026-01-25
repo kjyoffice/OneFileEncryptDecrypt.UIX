@@ -1,11 +1,6 @@
 ﻿[
   {
     "fileID": "hello",
-    "filePath": "D:\\Download\\Dummy\\IMG_2819.jpg"
-  },
-  { "fileID": "hello1","filePath": "D:\\Download\\Dummy\\IMG_2819_1.jpg" },
-  { "fileID": "hello2","filePath": "D:\\Download\\Dummy\\IMG_2819_2.jpg" },
-  { "fileID": "hello3","filePath": "D:\\Download\\Dummy\\IMG_2819_3.jpg" },
-  { "fileID": "hello4","filePath": "D:\\Download\\Dummy\\IMG_2819_4.jpg" },
-  { "fileID": "hello5","filePath": "D:\\Download\\Dummy\\IMG_2819_5.jpg" }
+    "filePath": "D:\\Download\\Dummy\\IMG_2819.jpg.ofedx"
+  }
 ]

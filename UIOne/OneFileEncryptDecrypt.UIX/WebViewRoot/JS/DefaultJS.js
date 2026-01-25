@@ -23,6 +23,7 @@ const MessageSetX_Hangul = {
     WF_NOT_EXIST_FILE: '파일이 존재하지 않습니다.',
     WF_WRONG_ENCRYPT_FILE: '암호화 할 파일이 올바르지 않습니다.',
     WF_WRONG_DECRYPT_FILE: '복호화 할 파일이 올바르지 않습니다.',
+    WF_OFED_AFTER_EXECUTE_WRONG: '프로그램 실행 결과가 올바르지 않습니다.'
 };
 const MessageSetX_English = {
     HTML_SelectNewEncrypt: 'Select encrypt file',
@@ -48,6 +49,7 @@ const MessageSetX_English = {
     WF_NOT_EXIST_FILE: 'Not exist file.',
     WF_WRONG_ENCRYPT_FILE: 'Wrong encrypt file.',
     WF_WRONG_DECRYPT_FILE: 'Erong decrypt file',
+    WF_OFED_AFTER_EXECUTE_WRONG: 'Wrong OFED execute result.'
 };
 const ProcessX = {
     LanguageCode: 'KO-KR',
@@ -92,15 +94,10 @@ const NewCryptoX = {
     },
     StartNewCrypto_StartProcessResult: function (dataX) {
         const msgSetX = ProcessX.MessageSetX;
-        if (dataX.isSuccess == true) {
-            console.log('StartNewCrypto_StartProcessResult', dataX);
-            DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox('GOGOGO');
-        }
-        else {
-            DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
-        }
+        const msgX = ((dataX.isSuccess == true) ? msgSetX.Common_Complete : msgSetX[dataX.messageCode]);
+        DefaultPageBlindX.HideNow();
+        LatestListX.DisplayList();
+        SimpleDialogX.AlertBox(msgX);
     }
 };
 const LatestListX = {
@@ -176,21 +173,10 @@ const LatestListX = {
     },
     CryptoFileNow_Result: function (dataX) {
         const msgSetX = ProcessX.MessageSetX;
-        if (dataX.isSuccess == true) {
-            const sd = dataX.supportData;
-            const fileItem = dataX.mainData;
-            const delItemX = document.getElementById(('fileitemx_' + sd.deleteFileID));
-            const areaX = document.querySelector('#mainframe .latestlistarea ul');
-            const htmlX = LatestListX.CreateFileItem(fileItem, msgSetX);
-            delItemX.remove();
-            areaX.insertAdjacentHTML('afterbegin', htmlX);
-            DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox(msgSetX.Common_Complete);
-        }
-        else {
-            DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
-        }
+        const msgX = ((dataX.isSuccess == true) ? msgSetX.Common_Complete : msgSetX[dataX.messageCode]);
+        DefaultPageBlindX.HideNow();
+        LatestListX.DisplayList();
+        SimpleDialogX.AlertBox(msgX);
     },
     EncryptFile: function (fileID) {
         LatestListX.CryptoFileNow(fileID, true);
@@ -209,13 +195,10 @@ const LatestListX = {
                     if (delResult == 'OK') {
                         itemX.remove();
                         LatestListX.DeleteItemAfterNotExist(msgSetX);
-                        DefaultPageBlindX.HideNow();
-                        SimpleDialogX.AlertBox(msgSetX.Common_DeleteConfirm);
                     }
-                    else {
-                        DefaultPageBlindX.HideNow();
-                        SimpleDialogX.AlertBox(msgSetX[delResult]);
-                    }
+                    const msgX = ((delResult == 'OK') ? msgSetX.Common_DeleteConfirm : msgSetX[delResult]);
+                    DefaultPageBlindX.HideNow();
+                    SimpleDialogX.AlertBox(msgX);
                 }
             });
         }
@@ -407,6 +390,7 @@ const PageLoadingX = {
 };
 const ReceiveWebVeiwMessage = function (e) {
     const dataX = e.data;
+    console.log('[ReceiveWebVeiwMessage] ', dataX);
     if (dataX.orderID == 'LATESTFILE_CRYPTOFILERESULT') {
         LatestListX.CryptoFileNow_Result(dataX);
     }
