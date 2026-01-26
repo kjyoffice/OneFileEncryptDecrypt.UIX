@@ -18,6 +18,14 @@ namespace OneFileEncryptDecrypt.UIX.XAppConfig
             }
         }
 
+        public static string InStorageDirectoryPath
+        {
+            get
+            {
+                return Path.GetFullPath(ConfigurationManager.AppSettings["InStorageDirectoryPath"].ToString());
+            }
+        }
+
         public static string OFEDAppPath
         {
             get

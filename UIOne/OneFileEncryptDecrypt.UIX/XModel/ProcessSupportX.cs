@@ -23,7 +23,7 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         public ProcessSupportX(string appName, bool isDebugMode)
         {
             var languageCode = CultureInfo.CurrentUICulture.Name.ToUpper();
-            var inStorageDirPath = ((isDebugMode == true) ? @"..\..\InStorage" : @".\InStorage");
+            var inStorageDirPath = ((isDebugMode == true) ? @"..\..\InStorage" : XAppConfig.AppSettings.InStorageDirectoryPath);
 
             this.AppName = ((isDebugMode == true) ? $"{appName} (Debug)" : appName);
             this.LanguageCode = languageCode;
