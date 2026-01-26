@@ -60,6 +60,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XAppConfig\AppSettings.cs" />
+    <Compile Include="XMessage\WorkMessageSet.cs" />
     <Compile Include="XModel\DeleteFileIDData.cs" />
     <Compile Include="XModel\FilePathCryptoModeData.cs" />
     <Compile Include="XModel\LatestCryptoFileItem.cs" />

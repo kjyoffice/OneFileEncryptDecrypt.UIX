@@ -16,7 +16,7 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         public string WebViewHostName { get; private set; }
         public string InStorageDirectoryPath { get; private set; }
         public string LatestCryptoFilePath { get; private set; }
-        public bool IsHangul { get; private set; }
+        public XMessage.WorkMessageSet WorkMessage { get; private set; }
 
         // ----------------------------------------------------------
 
@@ -31,7 +31,7 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             this.WebViewHostName = (XAppConfig.AppSettings.WebView2VirtualHostName + ".localapp");
             this.InStorageDirectoryPath = inStorageDirPath;
             this.LatestCryptoFilePath = Path.Combine(inStorageDirPath, "LatestCryptoFile.json");
-            this.IsHangul = (languageCode == "KO-KR");
+            this.WorkMessage = new XMessage.WorkMessageSet(languageCode);
         }
     }
 }

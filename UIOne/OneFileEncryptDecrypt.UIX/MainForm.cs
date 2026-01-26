@@ -353,7 +353,8 @@ namespace OneFileEncryptDecrypt.UIX
             this.Icon = XResource.DefaultResource.DefaultIcon;
             this.MainNotifyIcon.Icon = XResource.DefaultResource.DefaultIcon;
             this.MainNotifyIcon.Text = psx.AppName;
-            this.MNICMS_Exit.Text = ((psx.IsHangul == true) ? "종료" : "Exit");
+            // 종료
+            this.MNICMS_Exit.Text = psx.WorkMessage.ExitTitle;
             this.InitializeDebugTimeControl(psx);
             this.LCFIList = this.GetLatestCryptoFileList(psx);
         }
@@ -385,10 +386,9 @@ namespace OneFileEncryptDecrypt.UIX
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             var psx = this.PSX;
-            var caption = this.Text;
-            var closeQuestion = ((psx.IsHangul == true) ? "프로그램을 종료하겠습니까?" : "Do you want to exit the program?");
 
-            if (MessageBox.Show(closeQuestion, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            // 프로그램을 종료하겠습니까?
+            if (MessageBox.Show(psx.WorkMessage.ExitAppQuestion, psx.AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
                 e.Cancel = true;
             }
@@ -453,17 +453,20 @@ namespace OneFileEncryptDecrypt.UIX
                     }
                     else
                     {
-                        MessageBox.Show("웹뷰 초기화 처리에 실패했습니다. - 코어 없음", caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // 웹뷰 초기화 처리에 실패했습니다. - 코어 없음
+                        MessageBox.Show(psx.WorkMessage.WebViewInitializeFail_NotExistCore, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("웹뷰 초기화 처리에 실패했습니다. - 변환 실패", caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // 웹뷰 초기화 처리에 실패했습니다. - 변환 실패
+                    MessageBox.Show(psx.WorkMessage.WebViewInitializeFail_ConvertFail, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                MessageBox.Show("웹뷰 초기화에 실패했습니다.", caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // 웹뷰 초기화에 실패했습니다.
+                MessageBox.Show(psx.WorkMessage.WebViewInitializeFail, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

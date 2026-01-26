@@ -52,9 +52,8 @@ namespace OneFileEncryptDecrypt.UIX
                     }
                     else
                     {
-                        var msgX = ((psx.IsHangul == true) ? "프로그램이 이미 실행중입니다." : "Program is already running.");
-
-                        MessageBox.Show(msgX, psx.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // 프로그램이 이미 실행중입니다.
+                        MessageBox.Show(psx.WorkMessage.AppAlreadyRunning, psx.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
                     mt.Close();
@@ -62,9 +61,8 @@ namespace OneFileEncryptDecrypt.UIX
             }
             else
             {
-                var msgX = ((psx.IsHangul == true) ? "OFED 프로그램이 없습니다." : "Not exist OFED application.");
-
-                MessageBox.Show(msgX, psx.AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                // OFED 프로그램이 없습니다.
+                MessageBox.Show(psx.WorkMessage.NotExistOFEDApp, psx.AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
     }
