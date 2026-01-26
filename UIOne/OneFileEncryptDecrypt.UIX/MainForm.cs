@@ -101,13 +101,12 @@ namespace OneFileEncryptDecrypt.UIX
 
         private string OFEDExecute_EncryptArguments(string cryptoPassword, string filePath)
         {
-            // !!!!!!!
-            return $"encrypt --password {cryptoPassword} --file ₩"{filePath}₩" --isuix true";
+            return $"encrypt --password \"{cryptoPassword}\" --file \"{filePath}\" --isuix true";
         }
 
         private string OFEDExecute_DecryptArguments(string cryptoPassword, string filePath)
         {
-            return $"decrypt --password {cryptoPassword} --file ₩"{filePath}₩" --isuix true";
+            return $"decrypt --password \"{cryptoPassword}\" --file \"{filePath}\" --isuix true";
         }
 
         // -------------------------------------------------
