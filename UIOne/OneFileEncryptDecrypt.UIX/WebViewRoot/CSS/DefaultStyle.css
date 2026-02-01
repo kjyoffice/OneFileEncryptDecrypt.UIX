@@ -14,6 +14,8 @@
     --ofed-decryptbordercolor : #5ea8fd;
     --ofed-pageblindbgcolor : #999999;
     --ofed-defaultfontfamily : "Noto Sans KR";
+    --ofed-listrefreshbgcolor : #67ff86;
+    --ofed-listrefreshbordercolor : #62cf78;    
 
     --ofed-sd-mainbgcolor : #ffffff;
     --ofed-sd-mainshadowcolor : #7b7b7b;
@@ -57,7 +59,10 @@ a { color:var(--ofed-defaultfontcolor); text-decoration:none; }
 #mainframe .newcryptobox .cryptobox { width:50%; }
 #mainframe .newcryptobox .cryptobox .mainaction button { width:100%; padding:10px; font-weight:bold; border-radius:5px; cursor:pointer; }
 
-#mainframe .latestlistarea { width:100%; height:calc(100vh - 220px); overflow-x:hidden; overflow-y:auto; }
+#mainframe .refresharea { width:100%; height:50px; padding:0px 10px; display:flex; justify-content:flex-end; align-items:center; }
+#mainframe .refresharea button.listrefresh { padding:5px; font-size:0.7rem; border-radius:5px; cursor:pointer; background-color:var(--ofed-listrefreshbgcolor); border:1px solid var(--ofed-listrefreshbordercolor); } 
+
+#mainframe .latestlistarea { width:100%; height:calc(100vh - 270px); overflow-x:hidden; overflow-y:auto; }
 #mainframe .latestlistarea ul { list-style:none; }
 #mainframe .latestlistarea ul li.emptyitembox { padding:20px 0px; color:var(--ofed-listemptyfontcolor); text-align:center; font-style:italic; }
 #mainframe .latestlistarea ul li.itemx { padding:10px; border-top:1px solid transparent; border-bottom:1px solid transparent; display: flex; align-items: center; flex-direction: row; justify-content: space-between; gap:10px; }

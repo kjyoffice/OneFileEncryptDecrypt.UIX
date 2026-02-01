@@ -2,6 +2,7 @@
 const MessageSetX_Hangul = {
     HTML_SelectNewEncrypt: '암호화 파일 선택',
     HTML_SelectNewDecrypt: '복호화 파일 선택',
+    HTML_ListRefresh: '새로고침',
     Common_Encrypt: '암호화',
     Common_Decrypt: '복호화',
     Common_NotExistItem: '항목이 없습니다.',
@@ -31,6 +32,7 @@ const MessageSetX_Hangul = {
 const MessageSetX_English = {
     HTML_SelectNewEncrypt: 'Select encrypt file',
     HTML_SelectNewDecrypt: 'Select decrypt file',
+    HTML_ListRefresh: 'Refresh',
     Common_Encrypt: 'Encrypt',
     Common_Decrypt: 'Decrypt',
     Common_NotExistItem: 'Not exist item',
@@ -428,11 +430,18 @@ const PageLoadingX = {
         LanguageX.SetPageLanguage();
         PageLoadingX.NewCryptoAction('encrypt', NewCryptoX.EncryptFile);
         PageLoadingX.NewCryptoAction('decrypt', NewCryptoX.DecryptFile);
+        PageLoadingX.LatestListRefresh();
         LatestListX.DisplayList();
     },
     NewCryptoAction: function (cryptoType, clickAction) {
         const btnX = document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button'));
         btnX.addEventListener('click', clickAction);
+    },
+    LatestListRefresh: function () {
+        const btnX = document.querySelector('#mainframe .refresharea button.listrefresh');
+        btnX.addEventListener('click', function (e) {
+            LatestListX.DisplayList();
+        });
     }
 };
 const ReceiveWebVeiwMessage = function (e) {

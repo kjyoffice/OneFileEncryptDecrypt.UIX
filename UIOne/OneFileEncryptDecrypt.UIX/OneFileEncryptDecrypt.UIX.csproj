@@ -133,6 +133,7 @@
     <Content Include="WebViewRoot\CSS\DefaultStyle.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="WebViewRoot\favicon.ico" />
     <Content Include="WebViewRoot\Index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

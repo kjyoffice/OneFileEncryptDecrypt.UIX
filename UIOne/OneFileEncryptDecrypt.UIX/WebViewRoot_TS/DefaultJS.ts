@@ -18,6 +18,7 @@ type ProcessXType = {
 type MessageSetXType = {
     HTML_SelectNewEncrypt:string;
     HTML_SelectNewDecrypt:string;
+    HTML_ListRefresh:string;
     // ------------
     Common_Encrypt:string;
     Common_Decrypt:string;    
@@ -72,6 +73,7 @@ type RWMOT_MD_NewCryptoSelectFileType = {
 const MessageSetX_Hangul:MessageSetXType = {
     HTML_SelectNewEncrypt:'암호화 파일 선택',
     HTML_SelectNewDecrypt:'복호화 파일 선택',
+    HTML_ListRefresh:'새로고침',
     // ------------
     Common_Encrypt : '암호화',
     Common_Decrypt : '복호화',
@@ -105,6 +107,7 @@ const MessageSetX_Hangul:MessageSetXType = {
 const MessageSetX_English:MessageSetXType = {
     HTML_SelectNewEncrypt:'Select encrypt file',
     HTML_SelectNewDecrypt:'Select decrypt file',
+    HTML_ListRefresh:'Refresh',
     // ------------
     Common_Encrypt : 'Encrypt',
     Common_Decrypt : 'Decrypt',
@@ -604,12 +607,23 @@ const PageLoadingX = {
         LanguageX.SetPageLanguage();
         PageLoadingX.NewCryptoAction('encrypt', NewCryptoX.EncryptFile);
         PageLoadingX.NewCryptoAction('decrypt', NewCryptoX.DecryptFile);
+        PageLoadingX.LatestListRefresh();
         LatestListX.DisplayList();
     },
     NewCryptoAction : function(cryptoType:string, clickAction:EventParameterFNType) {
         const btnX = (document.querySelector(('#mainframe .newcryptobox .' + cryptoType + 'box .mainaction button')) as HTMLButtonElement);
 
         btnX.addEventListener('click', clickAction);
+    },
+    LatestListRefresh : function() : void {
+        const btnX = (document.querySelector('#mainframe .refresharea button.listrefresh') as HTMLButtonElement);
+
+        btnX.addEventListener(
+            'click', 
+            function(e:Event) : void {
+                LatestListX.DisplayList();
+            }
+        );
     }
 };
 

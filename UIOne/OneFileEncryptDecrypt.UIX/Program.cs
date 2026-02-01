@@ -70,7 +70,6 @@ namespace OneFileEncryptDecrypt.UIX
 
 
 // 파일 리스트 더블클릭시 실행
-// 리스트 새로고침 버튼 추가
 // OFED 메인 프로그램을 리포에 참조
 // app.config에 경로 안내
 // 리드미 써라
