@@ -19,6 +19,8 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         private Func<string, bool, string, string> CryptoLatestFileAction { get; set; }
         private Action<bool> NewCryptoNowAction { get; set; }
         private Action<string, bool, string> NewCryptoStartProcessAction { get; set; }
+        private Func<string> GetSavedCryptoPasswordAction { get; set; }
+        private Action<string> SetSaveCryptoPasswordAction { get; set; }
 
         // -----------------------------------------------------------------
 
@@ -28,7 +30,9 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             Func<string, string> deleteLatestCryptoFileAction, 
             Func<string, bool, string, string> cryptoLatestFileAction, 
             Action<bool> newCryptoNowAction,
-            Action<string, bool, string> newCryptoStartProcessAction
+            Action<string, bool, string> newCryptoStartProcessAction,
+            Func<string> getSavedCryptoPasswordAction,
+            Action<string> setSaveCryptoPasswordAction
         )
         {
             this.PSX = psx;
@@ -37,6 +41,8 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             this.CryptoLatestFileAction = cryptoLatestFileAction;
             this.NewCryptoNowAction = newCryptoNowAction;
             this.NewCryptoStartProcessAction = newCryptoStartProcessAction;
+            this.GetSavedCryptoPasswordAction = getSavedCryptoPasswordAction;
+            this.SetSaveCryptoPasswordAction = setSaveCryptoPasswordAction;
         }
 
         public string HelloMessage(string name)
@@ -67,6 +73,16 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         public void NewCryptoStartProcess(string filePath, bool isEncrypt, string cryptoPassword)
         {
             this.NewCryptoStartProcessAction(filePath, isEncrypt, cryptoPassword);
+        }
+
+        public string GetSavedCryptoPassword()
+        {
+            return this.GetSavedCryptoPasswordAction();
+        }
+
+        public void SetSaveCryptoPassword(string cryptoPassword)
+        {
+            this.SetSaveCryptoPasswordAction(cryptoPassword);
         }
     }
 }

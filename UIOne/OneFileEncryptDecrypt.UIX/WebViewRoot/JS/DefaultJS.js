@@ -17,6 +17,9 @@ const MessageSetX_Hangul = {
     DecryptFileQuestion: '파일을 복호화 하겠습니까?',
     PleaseInputEncryptPassword: '암호화 할 비밀번호를 입력해주세요.',
     PleaseInputDecryptPassword: '복호화 할 비밀번호를 입력해주세요.',
+    PleaseInputPasswordNotify: '비밀번호를 입력해주세요.',
+    SavePasswordTitle: '비밀번호 저장',
+    SavePasswordTimeNotify: '비밀번호 저장은 현재 프로그램 실행에서만 허용됩니다.',
     WF_EMPTY_OR_WRONG_FILEID: 'FileID가 없거나 올바르지 않습니다.',
     WF_NOT_EXIST_FILEITEM: '파일 항목이 없습니다.',
     WF_UNDEFINED_PROCESS: '지정되지 않은 진행입니다.',
@@ -43,6 +46,9 @@ const MessageSetX_English = {
     DecryptFileQuestion: 'Are you sure decrypt file?',
     PleaseInputEncryptPassword: 'Please input encrypt password.',
     PleaseInputDecryptPassword: 'Please input decrypt password.',
+    PleaseInputPasswordNotify: 'Please input password.',
+    SavePasswordTitle: 'Save password',
+    SavePasswordTimeNotify: 'Password saving is only allowed for the current program execution.',
     WF_EMPTY_OR_WRONG_FILEID: 'Empty or wrong FileID.',
     WF_NOT_EXIST_FILEITEM: 'Not exist file item.',
     WF_UNDEFINED_PROCESS: 'Undefined process.',
@@ -53,13 +59,17 @@ const MessageSetX_English = {
 };
 const ProcessX = {
     LanguageCode: 'KO-KR',
-    MessageSetX: MessageSetX_Hangul
+    MessageSetX: MessageSetX_Hangul,
+    IsSavePasswordBoxInPassword: false
 };
 const WVHandShakeX = function () {
     return window.chrome.webview.hostObjects.wvHandShake;
 };
 const SendHelloMessage = async function () {
     console.log(await WVHandShakeX().HelloMessage('Anders'));
+};
+const GetMessageSetX = function (msgSetX, msgCode) {
+    return msgSetX[msgCode];
 };
 const NewCryptoX = {
     EncryptFile: function (e) {
@@ -89,12 +99,12 @@ const NewCryptoX = {
         }
         else {
             DefaultPageBlindX.HideNow();
-            SimpleDialogX.AlertBox(msgSetX[dataX.messageCode]);
+            SimpleDialogX.AlertBox(GetMessageSetX(msgSetX, dataX.messageCode));
         }
     },
     StartNewCrypto_StartProcessResult: function (dataX) {
         const msgSetX = ProcessX.MessageSetX;
-        const msgX = ((dataX.isSuccess == true) ? msgSetX.Common_Complete : msgSetX[dataX.messageCode]);
+        const msgX = ((dataX.isSuccess == true) ? msgSetX.Common_Complete : GetMessageSetX(msgSetX, dataX.messageCode));
         DefaultPageBlindX.HideNow();
         LatestListX.DisplayList();
         SimpleDialogX.AlertBox(msgX);
@@ -165,7 +175,7 @@ const LatestListX = {
                     }
                     else {
                         DefaultPageBlindX.HideNow();
-                        SimpleDialogX.AlertBox(msgSetX[delResult]);
+                        SimpleDialogX.AlertBox(GetMessageSetX(msgSetX, delResult));
                     }
                 }
             });
@@ -173,7 +183,7 @@ const LatestListX = {
     },
     CryptoFileNow_Result: function (dataX) {
         const msgSetX = ProcessX.MessageSetX;
-        const msgX = ((dataX.isSuccess == true) ? msgSetX.Common_Complete : msgSetX[dataX.messageCode]);
+        const msgX = ((dataX.isSuccess == true) ? msgSetX.Common_Complete : GetMessageSetX(msgSetX, dataX.messageCode));
         DefaultPageBlindX.HideNow();
         LatestListX.DisplayList();
         SimpleDialogX.AlertBox(msgX);
@@ -196,7 +206,7 @@ const LatestListX = {
                         itemX.remove();
                         LatestListX.DeleteItemAfterNotExist(msgSetX);
                     }
-                    const msgX = ((delResult == 'OK') ? msgSetX.Common_DeleteConfirm : msgSetX[delResult]);
+                    const msgX = ((delResult == 'OK') ? msgSetX.Common_DeleteConfirm : GetMessageSetX(msgSetX, delResult));
                     DefaultPageBlindX.HideNow();
                     SimpleDialogX.AlertBox(msgX);
                 }
@@ -299,10 +309,12 @@ const SimpleDialogX = {
         });
         SimpleDialogX.ShowNow(tagID);
     },
-    PasswordBox: function (message, passwordMsg, actionCallbackFN) {
+    PasswordBox: async function (message, passwordMsg, actionCallbackFN) {
         const msgSetX = ProcessX.MessageSetX;
         const bodyX = document.getElementsByTagName('BODY')[0];
         const tagID = ('passworddialog' + Math.random().toString().replace('.', ''));
+        const savedPWD = ((ProcessX.IsSavePasswordBoxInPassword == true) ? await WVHandShakeX().GetSavedCryptoPassword() : '');
+        const checkedSign = ((ProcessX.IsSavePasswordBoxInPassword == true) ? 'checked="checked"' : '');
         const htmlX = `
             <div id="${tagID}blind" class="pageblind"></div>
             <div id="${tagID}" class="simpledialog passworddialog">
@@ -310,8 +322,14 @@ const SimpleDialogX = {
                 <div class="contentbox">
                     <div class="messagebox">${message}</div>
                     <div class="inputbox">
-                        <div class="inputtitle">${passwordMsg}</div>
-                        <div class="inputx"><input type="password" class="cryptopassword" /></div>
+                        <div class="contentx">
+                            <div class="titlex">${passwordMsg}</div>
+                            <div class="inputx"><input type="password" name="cryptopassword" value="${savedPWD}" class="cryptopassword" /></div>
+                            <div class="subaction">
+                                <label><input type="checkbox" name="savepassword" class="savepassword" onclick="SimpleDialogX.PasswordBox_SavePasswordAlertBox(this);" ${checkedSign} /> ${msgSetX.SavePasswordTitle}</label>
+                            </div>
+                            <div class="notifymessage"></div>
+                        </div>
                     </div>                    
                 </div>
                 <div class="actionbox">
@@ -324,17 +342,25 @@ const SimpleDialogX = {
         const sdX = document.getElementById(tagID);
         const okBtn = sdX.querySelector('.actionbox .okbutton');
         const cencelBtn = sdX.querySelector('.actionbox .cancelbutton');
-        okBtn.addEventListener('click', function (e) {
-            const cryptoPWDSource = sdX.querySelector('.cryptopassword');
-            cryptoPWDSource.classList.remove('invalidsign');
-            cryptoPWDSource.value = cryptoPWDSource.value.trim();
-            if (cryptoPWDSource.value == '') {
-                cryptoPWDSource.classList.add('invalidsign');
+        okBtn.addEventListener('click', async function (e) {
+            const cryptoPWD = sdX.querySelector('.cryptopassword');
+            const notifyMsg = sdX.querySelector('.notifymessage');
+            const savePWD = sdX.querySelector('.savepassword');
+            cryptoPWD.classList.remove('invalidsign');
+            cryptoPWD.value = cryptoPWD.value.trim();
+            notifyMsg.innerText = '';
+            if (cryptoPWD.value == '') {
+                cryptoPWD.classList.add('invalidsign');
+                notifyMsg.innerText = msgSetX.PleaseInputPasswordNotify;
+                cryptoPWD.focus();
             }
             else {
-                const cryptoPWD = cryptoPWDSource.value;
+                if (savePWD.checked == true) {
+                    await WVHandShakeX().SetSaveCryptoPassword(cryptoPWD.value);
+                }
+                ProcessX.IsSavePasswordBoxInPassword = savePWD.checked;
                 SimpleDialogX.HideNow(tagID);
-                actionCallbackFN(true, cryptoPWD);
+                actionCallbackFN(true, cryptoPWD.value);
             }
         });
         cencelBtn.addEventListener('click', function (e) {
@@ -342,6 +368,27 @@ const SimpleDialogX = {
             actionCallbackFN(false, '');
         });
         SimpleDialogX.ShowNow(tagID);
+    },
+    PasswordBox_SavePasswordAlertBox: function (inputSource) {
+        if (inputSource.checked == true) {
+            const msgSetX = ProcessX.MessageSetX;
+            const bodyX = document.getElementsByTagName('BODY')[0];
+            const tagID = ('alertdialog' + Math.random().toString().replace('.', ''));
+            const htmlX = `
+                <div id="${tagID}blind" class="pageblind sdoverpageblind"></div>
+                <div id="${tagID}" class="simpledialog sdoversimpledialog">
+                    <div class="titlebox">${msgSetX.SavePasswordTitle}</div>
+                    <div class="contentbox">
+                        <div class="messagebox">${msgSetX.SavePasswordTimeNotify}</div>
+                    </div>
+                    <div class="actionbox">
+                        <button type="button" class="confirmcolor okbutton" onclick="SimpleDialogX.HideNow('${tagID}');">${msgSetX.Common_Confirm}</button>
+                    </div>
+                </div>        
+            `;
+            bodyX.insertAdjacentHTML('beforeend', htmlX);
+            SimpleDialogX.ShowNow(tagID);
+        }
     }
 };
 const LanguageX = {
@@ -363,7 +410,7 @@ const LanguageX = {
         const msgCode = eleX.dataset[codeName];
         let result = '';
         if (msgCode != undefined) {
-            const msgX = msgSetX[('HTML_' + msgCode)];
+            const msgX = GetMessageSetX(msgSetX, ('HTML_' + msgCode));
             if (msgX != undefined) {
                 result = msgX.toString();
             }

@@ -34,6 +34,7 @@ namespace OneFileEncryptDecrypt.UIX
     {
         private XModel.ProcessSupportX PSX { get; set; }
         private List<XModel.LatestCryptoFileItem> LCFIList { get; set; }
+        private string SavedCryptoPassword { get; set; }
 
         // -------------------------------------------------
 
@@ -343,6 +344,16 @@ namespace OneFileEncryptDecrypt.UIX
             cwv.PostWebMessageAsJson(jsonText);
         }
 
+        private string WebViewAction_GetSavedCryptoPassword()
+        {
+            return this.SavedCryptoPassword;
+        }
+
+        private void WebViewAction_SetSaveCryptoPassword(string cryptoPassword)
+        {
+            this.SavedCryptoPassword = cryptoPassword;
+        }
+
         // -------------------------------------------------
 
         public MainForm(XModel.ProcessSupportX psx)
@@ -357,6 +368,7 @@ namespace OneFileEncryptDecrypt.UIX
             this.MNICMS_Exit.Text = psx.WorkMessage.ExitTitle;
             this.InitializeDebugTimeControl(psx);
             this.LCFIList = this.GetLatestCryptoFileList(psx);
+            this.SavedCryptoPassword = string.Empty;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -435,7 +447,9 @@ namespace OneFileEncryptDecrypt.UIX
                             this.WebViewAction_DeleteLatestCryptoFile, 
                             this.WebViewAction_CryptoLatestFile, 
                             this.WebViewAction_NewCryptoNow,
-                            this.WebViewAction_NewCryptoStartProcess
+                            this.WebViewAction_NewCryptoStartProcess,
+                            this.WebViewAction_GetSavedCryptoPassword,
+                            this.WebViewAction_SetSaveCryptoPassword
                         );
 
                         cwv.Settings.IsGeneralAutofillEnabled = false;

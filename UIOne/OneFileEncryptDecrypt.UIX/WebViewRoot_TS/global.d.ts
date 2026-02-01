@@ -15,6 +15,8 @@ declare global {
                         CryptoLatestFile(fileID:string, isEncrypt:boolean, cryptoPassword:string) : string;
                         NewCryptoNow(isEncrypt:boolean) : void;
                         NewCryptoStartProcess(filePath:string, isEncrypt:boolean, cryptoPassword:string) : void;
+                        GetSavedCryptoPassword():string;
+                        SetSaveCryptoPassword(cryptoPassword:string):void;
                     }
                 }
             };
