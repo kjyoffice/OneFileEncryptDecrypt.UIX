@@ -67,11 +67,10 @@ a { color:var(--ofed-defaultfontcolor); text-decoration:none; }
 #mainframe .latestlistarea ul li.emptyitembox { padding:20px 0px; color:var(--ofed-listemptyfontcolor); text-align:center; font-style:italic; }
 #mainframe .latestlistarea ul li.itemx { padding:10px; border-top:1px solid transparent; border-bottom:1px solid transparent; display: flex; align-items: center; flex-direction: row; justify-content: space-between; gap:10px; }
 #mainframe .latestlistarea ul li.itemx:hover { background-color:var(--ofed-listhoverbgcolor); border-top:1px solid var(--ofed-bordercolor); border-bottom:1px solid var(--ofed-bordercolor); }
-#mainframe .latestlistarea ul li.itemx:first-child:hover { border-top:1px solid transparent; }
 #mainframe .latestlistarea ul li.itemx button { padding:5px; border-radius:5px; cursor:pointer; }
 #mainframe .latestlistarea ul li.itemx .filenamebox { width:calc(100% - 270px); overflow-y:hidden; overflow-x:auto; }
 #mainframe .latestlistarea ul li.itemx .filenamebox .filename { padding:5px 0px; }
-#mainframe .latestlistarea ul li.itemx .filenamebox .dirpath { color:var(--ofed-listdirpathcolor); font-size:0.7rem; }
+#mainframe .latestlistarea ul li.itemx .filenamebox .dirpath a { color:var(--ofed-listdirpathcolor); font-size:0.7rem; }
 #mainframe .latestlistarea ul li.itemx .cryptobox { width:150px; }
 #mainframe .latestlistarea ul li.itemx .cryptobox button { width:100%; }
 #mainframe .latestlistarea ul li.itemx .deletebox { width:100px; text-align:right; }

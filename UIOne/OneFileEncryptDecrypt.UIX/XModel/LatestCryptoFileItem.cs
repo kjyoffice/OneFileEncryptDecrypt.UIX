@@ -75,8 +75,10 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         {
             var fileID = this.FileID;
             var filePath = this.FilePath;
-            var isAllow = this.IsAllowCheck(fileID, filePath);
-            var result = ((isAllow == true) && (fileID == fileIDSource));
+            var result = (
+                (fileID == fileIDSource) && 
+                (this.IsAllowCheck(fileID, filePath) == true)
+            );
 
             return result;
         }

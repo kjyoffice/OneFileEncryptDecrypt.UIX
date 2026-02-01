@@ -354,6 +354,60 @@ namespace OneFileEncryptDecrypt.UIX
             this.SavedCryptoPassword = cryptoPassword;
         }
 
+        private string WebViewAction_OpenFileOrDirectory(string fileID, bool isOpenFile)
+        {
+            var result = string.Empty;
+
+            if (this.IsAllowXID(fileID) == true)
+            {
+                var icfi = this.GetUseLCFI(fileID);
+
+                if (icfi != null)
+                {
+                    this.WebViewAction_OpenFileOrDirectory_OpenNow(icfi, isOpenFile);
+
+                    result = "OK";
+                }
+                else
+                {
+                    result = "WF_NOT_EXIST_FILEITEM";
+                }
+            }
+            else
+            {
+                result = "WF_EMPTY_OR_WRONG_FILEID";
+            }
+
+            return result;
+        }
+
+        private void WebViewAction_OpenFileOrDirectory_OpenNow(XModel.LatestCryptoFileItem icfi, bool isOpenFile)
+        {
+            var timerX = new Timer();
+            timerX.Interval = 100;
+            timerX.Tick += (object sender, EventArgs e) =>
+            {
+                timerX.Stop();
+                timerX.Dispose();
+
+                if ((isOpenFile == true) && (File.Exists(icfi.FilePath) == true))
+                {
+                    var psi = new ProcessStartInfo("explorer.exe", $"/select,\"{icfi.FilePath}\"");
+                    psi.UseShellExecute = true;
+
+                    Process.Start(psi);
+                }
+                else if ((isOpenFile == false) && (Directory.Exists(icfi.DirectoryPath) == true))
+                {
+                    var psi = new ProcessStartInfo("explorer.exe", $"\"{icfi.DirectoryPath}\"");
+                    psi.UseShellExecute = true;
+
+                    Process.Start(psi);
+                }
+            };
+            timerX.Start();
+        }
+
         // -------------------------------------------------
 
         public MainForm(XModel.ProcessSupportX psx)
@@ -449,7 +503,8 @@ namespace OneFileEncryptDecrypt.UIX
                             this.WebViewAction_NewCryptoNow,
                             this.WebViewAction_NewCryptoStartProcess,
                             this.WebViewAction_GetSavedCryptoPassword,
-                            this.WebViewAction_SetSaveCryptoPassword
+                            this.WebViewAction_SetSaveCryptoPassword,
+                            this.WebViewAction_OpenFileOrDirectory
                         );
 
                         cwv.Settings.IsGeneralAutofillEnabled = false;

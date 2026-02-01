@@ -152,8 +152,12 @@ const LatestListX = {
         const result = `
             <li id="fileitemx_${fileItem.fileID}" class="itemx">
                 <div class="filenamebox">
-                    <div class="filename" title="FileID : ${fileItem.fileID}">${fileItem.fileName}</div>
-                    <div class="dirpath">${fileItem.directoryPath}</div>
+                    <div class="filename">
+                        <a href="#filename" onclick="LatestListX.OpenFileOrDirectory('${fileItem.fileID}', true);">${fileItem.fileName}</a>
+                    </div>
+                    <div class="dirpath">
+                        <a href="#dirpath" onclick="LatestListX.OpenFileOrDirectory('${fileItem.fileID}', false);">${fileItem.directoryPath}</a>
+                    </div>
                 </div>
                 <div class="cryptobox">${cryptoBoxHTML}</div>
                 <div class="deletebox">
@@ -162,6 +166,12 @@ const LatestListX = {
             </li>      
         `;
         return result;
+    },
+    OpenFileOrDirectory: async function (fileID, isOpenFile) {
+        const resultCode = await WVHandShakeX().OpenFileOrDirectory(fileID, isOpenFile);
+        if (resultCode != 'OK') {
+            SimpleDialogX.AlertBox(GetMessageSetX(ProcessX.MessageSetX, resultCode));
+        }
     },
     CryptoFileNow: function (fileID, isEncrypt) {
         const itemX = document.getElementById(('fileitemx_' + fileID));

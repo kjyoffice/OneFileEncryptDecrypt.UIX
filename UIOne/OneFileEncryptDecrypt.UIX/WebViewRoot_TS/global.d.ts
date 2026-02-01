@@ -17,6 +17,7 @@ declare global {
                         NewCryptoStartProcess(filePath:string, isEncrypt:boolean, cryptoPassword:string) : void;
                         GetSavedCryptoPassword():string;
                         SetSaveCryptoPassword(cryptoPassword:string):void;
+                        OpenFileOrDirectory(filePath:string, isOpenFile:boolean) : string;
                     }
                 }
             };

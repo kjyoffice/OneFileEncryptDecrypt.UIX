@@ -21,6 +21,7 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         private Action<string, bool, string> NewCryptoStartProcessAction { get; set; }
         private Func<string> GetSavedCryptoPasswordAction { get; set; }
         private Action<string> SetSaveCryptoPasswordAction { get; set; }
+        private Func<string, bool, string> OpenFileOrDirectoryAction { get; set; }
 
         // -----------------------------------------------------------------
 
@@ -32,7 +33,8 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             Action<bool> newCryptoNowAction,
             Action<string, bool, string> newCryptoStartProcessAction,
             Func<string> getSavedCryptoPasswordAction,
-            Action<string> setSaveCryptoPasswordAction
+            Action<string> setSaveCryptoPasswordAction,
+            Func<string, bool, string> openFileOrDirectoryAction
         )
         {
             this.PSX = psx;
@@ -43,6 +45,7 @@ namespace OneFileEncryptDecrypt.UIX.XModel
             this.NewCryptoStartProcessAction = newCryptoStartProcessAction;
             this.GetSavedCryptoPasswordAction = getSavedCryptoPasswordAction;
             this.SetSaveCryptoPasswordAction = setSaveCryptoPasswordAction;
+            this.OpenFileOrDirectoryAction = openFileOrDirectoryAction;
         }
 
         public string HelloMessage(string name)
@@ -83,6 +86,11 @@ namespace OneFileEncryptDecrypt.UIX.XModel
         public void SetSaveCryptoPassword(string cryptoPassword)
         {
             this.SetSaveCryptoPasswordAction(cryptoPassword);
+        }
+
+        public string OpenFileOrDirectory(string filePath, bool isOpenFile)
+        {
+            return this.OpenFileOrDirectoryAction(filePath, isOpenFile);
         }
     }
 }
